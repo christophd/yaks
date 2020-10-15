@@ -29,6 +29,20 @@ rules:
   verbs:
   - "*"
 - apiGroups:
+  - camel.apache.org
+  resources:
+  - integrations
+  - kamelets
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
   - ""
   resources:
   - pods
@@ -46,6 +60,15 @@ rules:
   - list
   - patch
   - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods/log
+  - pods/status
+  verbs:
+  - get
+  - list
   - watch
 - apiGroups:
   - rbac.authorization.k8s.io
@@ -120,6 +143,48 @@ rules:
   - monitoring.coreos.com
   resources:
   - servicemonitors
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - eventing.knative.dev
+  resources:
+  - brokers
+  - triggers
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - messaging.knative.dev
+  resources:
+  - channels
+  - inmemorychannels
+  - subscriptions
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - sources.knative.dev
+  resources:
+  - "*"
   verbs:
   - create
   - delete
