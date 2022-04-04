@@ -1,0 +1,30 @@
+---
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: participants-trigger-kogito-serverless-workflow-demo
+spec:
+  broker: default
+  filter:
+    attributes:
+      type: participants
+  subscriber:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: kogito-serverless-workflow-demo
+---
+apiVersion: sources.knative.dev/v1
+kind: SinkBinding
+metadata:
+  name: sb-kogito-serverless-workflow-demo
+spec:
+  sink:
+    ref:
+      apiVersion: eventing.knative.dev/v1
+      kind: Broker
+      name: default
+  subject:
+    apiVersion: serving.knative.dev/v1
+    kind: Service
+    name: kogito-serverless-workflow-demo

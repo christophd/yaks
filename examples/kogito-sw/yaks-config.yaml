@@ -1,0 +1,42 @@
+# ---------------------------------------------------------------------------
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ---------------------------------------------------------------------------
+
+config:
+  runtime:
+    env:
+      - name: YAKS_KUBERNETES_AUTO_REMOVE_RESOURCES
+        value: false
+      - name: YAKS_KNATIVE_AUTO_REMOVE_RESOURCES
+        value: false
+      - name: YAKS_KNATIVE_BROKER_HOST
+        value: broker-ingress.knative-eventing.svc.cluster.local
+      - name: YAKS_KNATIVE_BROKER_URL
+        value: http://broker-ingress.knative-eventing.svc.cluster.local/${KNATIVE_NAMESPACE}/${KNATIVE_BROKER}
+      - name: YAKS_KUBERNETES_SERVICE_NAME
+        value: prize-service
+      - name: YAKS_HTTP_SERVICE_NAME
+        value: kogito-demo
+pre:
+  - name: Deploy Kogito services
+    if: env:CI=true
+    run: |
+      kubectl apply -f kogito-service.yaml
+      kubectl apply -f kogito-source.yaml
+post:
+  - name: Remove Knative trigger
+    run: |
+      kubectl delete trigger prize-service-trigger

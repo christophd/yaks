@@ -1,0 +1,33 @@
+---
+openapi: 3.0.3
+info:
+  title: Employee Service
+  version: 1.0.0
+paths:
+  /employee/{name}:
+    get:
+      operationId: getEmployeeDetails
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeResult'
+components:
+  schemas:
+    EmployeeResult:
+      type: object
+      properties:
+        address:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
