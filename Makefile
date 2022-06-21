@@ -152,6 +152,7 @@ version:
 	@echo $(VERSION)
 
 .PHONY: clean build build-yaks build-resources generate-docs release-docs release-docs-dry-run release-docs-major update-olm cross-compile test docker-build images images-no-test images-push package-artifacts package-artifacts-no-test release release-snapshot set-version-file set-version set-next-version check-repo check-licenses snapshot-version version
+.PHONY: controller-gen kustomize operator-sdk
 
 # find or download controller-gen if necessary
 controller-gen:
