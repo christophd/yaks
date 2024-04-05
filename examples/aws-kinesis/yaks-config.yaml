@@ -28,3 +28,8 @@ config:
           version: "@aws-java-sdk2.version@"
     resources:
       - amazonKinesisClient.groovy
+  dump:
+    enabled: true
+    failedOnly: true
+post:
+  - run: cat ../../_output/print-dump.log
