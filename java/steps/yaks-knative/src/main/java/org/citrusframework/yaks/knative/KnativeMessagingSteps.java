@@ -16,19 +16,19 @@
 
 package org.citrusframework.yaks.knative;
 
-import org.citrusframework.Citrus;
-import org.citrusframework.TestCaseRunner;
-import org.citrusframework.annotations.CitrusFramework;
-import org.citrusframework.annotations.CitrusResource;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.fabric8.knative.client.KnativeClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import org.citrusframework.Citrus;
+import org.citrusframework.TestCaseRunner;
+import org.citrusframework.annotations.CitrusFramework;
+import org.citrusframework.annotations.CitrusResource;
 import org.citrusframework.yaks.kubernetes.KubernetesSupport;
 
 import static org.citrusframework.container.FinallySequence.Builder.doFinally;
-import static org.citrusframework.yaks.knative.actions.KnativeActionBuilder.knative;
+import static org.citrusframework.knative.actions.KnativeActionBuilder.knative;
 
 /**
  * @author Christoph Deppisch
@@ -81,7 +81,7 @@ public class KnativeMessagingSteps {
         runner.given(knative().client(k8sClient).client(knativeClient)
                 .subscriptions()
                 .create(serviceName + "-subscription")
-                .onChannel(channelName)
+                .channel(channelName)
                 .service(serviceName));
 
         if (KnativeSteps.autoRemoveResources) {

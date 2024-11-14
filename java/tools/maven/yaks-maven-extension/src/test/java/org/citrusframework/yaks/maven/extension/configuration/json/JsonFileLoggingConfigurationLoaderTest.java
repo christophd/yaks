@@ -43,7 +43,7 @@ public class JsonFileLoggingConfigurationLoaderTest {
 
     @Test
     public void shouldLoadFromJson() throws LifecycleExecutionException, URISyntaxException {
-        Optional<Level> rootLevel = loader.load(TestHelper.getClasspathResource("yaks.settings.json"), builder, logger);
+        Optional<Level> rootLevel = loader.load(TestHelper.getClasspathResource("citrus.settings.json"), builder, logger);
         Assert.assertTrue(rootLevel.isPresent());
         Assert.assertEquals(Level.INFO, rootLevel.get());
 

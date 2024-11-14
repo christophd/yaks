@@ -23,8 +23,8 @@ public final class KameletSettings {
 
     public static final String KAMELET_TYPE_LABEL = "camel.apache.org/kamelet.type";
 
-    private static final String KAMELET_PROPERTY_PREFIX = "yaks.kamelet.";
-    private static final String KAMELET_ENV_PREFIX = "YAKS_KAMELET_";
+    private static final String KAMELET_PROPERTY_PREFIX = "citrus.kamelet.";
+    private static final String KAMELET_ENV_PREFIX = "CITRUS_KAMELET_";
 
     private static final String NAMESPACE_PROPERTY = KAMELET_PROPERTY_PREFIX + "namespace";
     private static final String NAMESPACE_ENV = KAMELET_ENV_PREFIX + "NAMESPACE";

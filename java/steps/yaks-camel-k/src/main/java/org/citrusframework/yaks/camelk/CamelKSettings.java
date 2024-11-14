@@ -27,8 +27,8 @@ import org.citrusframework.yaks.kubernetes.KubernetesSettings;
  */
 public final class CamelKSettings {
 
-    private static final String CAMELK_PROPERTY_PREFIX = "yaks.camelk.";
-    private static final String CAMELK_ENV_PREFIX = "YAKS_CAMELK_";
+    private static final String CAMELK_PROPERTY_PREFIX = "citrus.camelk.";
+    private static final String CAMELK_ENV_PREFIX = "CITRUS_CAMELK_";
 
     public static final String V1 = "v1";
     public static final String V1ALPHA1 = "v1alpha1";
@@ -54,7 +54,7 @@ public final class CamelKSettings {
 
     private static final String AUTO_REMOVE_RESOURCES_PROPERTY = CAMELK_PROPERTY_PREFIX + "auto.remove.resources";
     private static final String AUTO_REMOVE_RESOURCES_ENV = CAMELK_ENV_PREFIX + "AUTO_REMOVE_RESOURCES";
-    private static final String AUTO_REMOVE_RESOURCES_DEFAULT = "true";
+    private static final String AUTO_REMOVE_RESOURCES_DEFAULT = "false";
 
     private static final String SUPPORT_VARIABLES_IN_SOURCES_PROPERTY = CAMELK_PROPERTY_PREFIX + "support.variables.in.sources";
     private static final String SUPPORT_VARIABLES_IN_SOURCES_ENV = CAMELK_ENV_PREFIX + "SUPPORT_VARIABLES_IN_SOURCES";

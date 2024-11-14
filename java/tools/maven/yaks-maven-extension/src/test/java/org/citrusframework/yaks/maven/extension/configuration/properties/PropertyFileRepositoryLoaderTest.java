@@ -38,7 +38,7 @@ public class PropertyFileRepositoryLoaderTest {
 
     @Test
     public void shouldLoadFromPropertyFile() throws LifecycleExecutionException, URISyntaxException {
-        List<Repository> repositoryList = loader.load(TestHelper.getClasspathResource("yaks.properties"), logger, false);
+        List<Repository> repositoryList = loader.load(TestHelper.getClasspathResource("citrus.properties"), logger, false);
         TestHelper.verifyRepositories(repositoryList);
     }
 

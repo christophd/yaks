@@ -14,12 +14,12 @@ The following sections guide you through the Selenium capabilities in YAKS.
 
 Selenium supports many browsers. When running a YAKS test with Selenium you need to choose which browser type to use. By
 default, YAKS uses the `htmlunit` browser type. You can overwrite this type with the system property `yaks.selenium.browser.type`
-or environment variable `YAKS_SELENIUM_BROWSER_TYPE` set on the YAKS configuration.
+or environment variable `CITRUS_SELENIUM_BROWSER_TYPE` set on the YAKS configuration.
 
 .Set Selenium browser type
 [source,bash]
 ----
-YAKS_SELENIUM_BROWSER_TYPE=chrome
+CITRUS_SELENIUM_BROWSER_TYPE=chrome
 ----
 
 These are the supported browser types:
@@ -49,7 +49,7 @@ Given browser "{name}"
 
 This loads the browser component with given name from the configuration (e.g. Spring application context).
 
-You can also use the system property `yaks.selenium.browser.name` environment variable `YAKS_SELENIUM_BROWSER_NAME`
+You can also use the system property `yaks.selenium.browser.name` environment variable `CITRUS_SELENIUM_BROWSER_NAME`
 
 [[selenium-browser-remote]]
 === Remote web driver
@@ -71,9 +71,9 @@ config:
     selenium:
       image: selenium/standalone-chrome:latest
     env:
-      - name: YAKS_SELENIUM_BROWSER_TYPE
+      - name: CITRUS_SELENIUM_BROWSER_TYPE
         value: chrome
-      - name: YAKS_SELENIUM_BROWSER_REMOTE_SERVER_URL
+      - name: CITRUS_SELENIUM_BROWSER_REMOTE_SERVER_URL
         value: http://localhost:4444/wd/hub
 ----
 

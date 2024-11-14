@@ -39,17 +39,18 @@ import org.citrusframework.context.TestContext;
 import org.citrusframework.exceptions.ActionTimeoutException;
 import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.http.message.HttpMessage;
+import org.citrusframework.kubernetes.actions.CreateServiceAction;
+import org.citrusframework.kubernetes.actions.VerifyPodAction;
+import org.citrusframework.kubernetes.model.KubernetesResource;
 import org.citrusframework.util.FileUtils;
 import org.citrusframework.yaks.http.HttpServerSteps;
-import org.citrusframework.yaks.kubernetes.actions.CreateServiceAction;
-import org.citrusframework.yaks.kubernetes.actions.VerifyPodAction;
 import org.citrusframework.yaks.util.ResourceUtils;
 import org.springframework.http.HttpStatus;
 
 import static org.citrusframework.actions.CreateVariablesAction.Builder.createVariable;
 import static org.citrusframework.container.Assert.Builder.assertException;
 import static org.citrusframework.container.FinallySequence.Builder.doFinally;
-import static org.citrusframework.yaks.kubernetes.actions.KubernetesActionBuilder.kubernetes;
+import static org.citrusframework.kubernetes.actions.KubernetesActionBuilder.kubernetes;
 
 public class KubernetesSteps {
 

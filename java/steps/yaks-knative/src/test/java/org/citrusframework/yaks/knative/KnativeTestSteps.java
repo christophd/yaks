@@ -16,13 +16,6 @@
 
 package org.citrusframework.yaks.knative;
 
-import org.citrusframework.Citrus;
-import org.citrusframework.TestCaseRunner;
-import org.citrusframework.actions.AbstractTestAction;
-import org.citrusframework.annotations.CitrusFramework;
-import org.citrusframework.annotations.CitrusResource;
-import org.citrusframework.context.TestContext;
-import org.citrusframework.http.message.HttpMessage;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -34,8 +27,16 @@ import io.fabric8.knative.internal.pkg.apis.Condition;
 import io.fabric8.knative.messaging.v1.SubscriptionList;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import org.assertj.core.api.Assertions;
-import org.citrusframework.yaks.knative.actions.KnativeAction;
-import org.citrusframework.yaks.knative.ce.CloudEventSupport;
+import org.citrusframework.Citrus;
+import org.citrusframework.TestCaseRunner;
+import org.citrusframework.actions.AbstractTestAction;
+import org.citrusframework.annotations.CitrusFramework;
+import org.citrusframework.annotations.CitrusResource;
+import org.citrusframework.context.TestContext;
+import org.citrusframework.http.message.HttpMessage;
+import org.citrusframework.knative.KnativeSettings;
+import org.citrusframework.knative.actions.KnativeAction;
+import org.citrusframework.knative.ce.CloudEventSupport;
 import org.citrusframework.yaks.kubernetes.KubernetesSupport;
 import org.springframework.http.HttpStatus;
 
@@ -182,6 +183,16 @@ public class KnativeTestSteps {
         @Override
         public KnativeClient getKnativeClient() {
             return KnativeSupport.getKnativeClient(citrus);
+        }
+
+        @Override
+        public String getNamespace() {
+            return null;
+        }
+
+        @Override
+        public boolean isAutoRemoveResources() {
+            return KnativeSettings.isAutoRemoveResources();
         }
     }
 }

@@ -5,13 +5,13 @@ Feature: MongoDB
 
   Scenario: Start container
     Given start MongoDB container
-    And log 'Started MongoDB container: ${YAKS_TESTCONTAINERS_MONGODB_CONTAINER_NAME}'
+    And log 'Started MongoDB container: ${CITRUS_TESTCONTAINERS_MONGODB_CONTAINER_NAME}'
 
   Scenario: Create MongoDB client
     Given New global Camel context
     Given bind to Camel registry mongoClient.groovy
     """
-    com.mongodb.client.MongoClients.create("${YAKS_TESTCONTAINERS_MONGODB_LOCAL_URL}")
+    com.mongodb.client.MongoClients.create("${CITRUS_TESTCONTAINERS_MONGODB_LOCAL_URL}")
     """
 
   Scenario: Insert collection

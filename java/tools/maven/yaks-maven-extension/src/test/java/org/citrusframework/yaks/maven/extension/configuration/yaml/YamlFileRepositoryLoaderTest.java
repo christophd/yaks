@@ -38,7 +38,7 @@ public class YamlFileRepositoryLoaderTest {
 
     @Test
     public void shouldLoadFromYaml() throws LifecycleExecutionException, URISyntaxException {
-        List<Repository> repositoryList = loader.load(TestHelper.getClasspathResource("yaks.settings.yaml"), logger, false);
+        List<Repository> repositoryList = loader.load(TestHelper.getClasspathResource("citrus.settings.yaml"), logger, false);
         TestHelper.verifyRepositories(repositoryList);
     }
 

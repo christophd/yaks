@@ -44,8 +44,8 @@ The timeout can be changed using the `timeout` option in the step declaration (i
 
 Scripts can leverage the following environment variables that are set automatically by the YAKS runtime:
 
-- **YAKS_NAMESPACE**: always contains the namespace where the tests will be executed, no matter if the namespace is fixed or temporary
-- **YAKS_TEST_STATUS**: indicates the test status (SUCCESS, FAILED)
+- **CITRUS_NAMESPACE**: always contains the namespace where the tests will be executed, no matter if the namespace is fixed or temporary
+- **CITRUS_TEST_STATUS**: indicates the test status (SUCCESS, FAILED)
 
 [[conditional-scripts]]
 == Conditional execution

@@ -31,7 +31,7 @@ import org.citrusframework.yaks.kubernetes.KubernetesSupport;
 import static org.citrusframework.actions.CreateVariablesAction.Builder.createVariable;
 import static org.citrusframework.container.FinallySequence.Builder.doFinally;
 import static org.citrusframework.container.RepeatOnErrorUntilTrue.Builder.repeatOnError;
-import static org.citrusframework.yaks.knative.actions.KnativeActionBuilder.knative;
+import static org.citrusframework.knative.actions.KnativeActionBuilder.knative;
 
 /**
  * @author Christoph Deppisch
@@ -107,7 +107,7 @@ public class KnativeEventingSteps {
         runner.given(knative().client(k8sClient).client(knativeClient)
                 .trigger()
                 .create(triggerName)
-                .onService(serviceName));
+                .service(serviceName));
 
         if (KnativeSteps.autoRemoveResources) {
             runner.then(doFinally()
@@ -122,7 +122,7 @@ public class KnativeEventingSteps {
         runner.given(knative().client(k8sClient).client(knativeClient)
                 .trigger()
                 .create(triggerName)
-                .onService(serviceName)
+                .service(serviceName)
                 .filter(filterAttributes.asMap(String.class, String.class)));
 
         if (KnativeSteps.autoRemoveResources) {
@@ -138,7 +138,7 @@ public class KnativeEventingSteps {
         runner.given(knative().client(k8sClient).client(knativeClient)
                 .trigger()
                 .create(triggerName)
-                .onChannel(channelName));
+                .channel(channelName));
 
         if (KnativeSteps.autoRemoveResources) {
             runner.then(doFinally()
@@ -153,7 +153,7 @@ public class KnativeEventingSteps {
         runner.given(knative().client(k8sClient).client(knativeClient)
                 .trigger()
                 .create(triggerName)
-                .onChannel(channelName)
+                .channel(channelName)
                 .filter(filterAttributes.asMap(String.class, String.class)));
 
         if (KnativeSteps.autoRemoveResources) {

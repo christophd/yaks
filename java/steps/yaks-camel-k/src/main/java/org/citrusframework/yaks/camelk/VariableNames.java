@@ -21,7 +21,7 @@ package org.citrusframework.yaks.camelk;
  */
 public enum VariableNames {
 
-    CLUSTER_TYPE("YAKS_CLUSTER_TYPE"),
+    CLUSTER_TYPE("CITRUS_CLUSTER_TYPE"),
     CAMELK_NAMESPACE("CAMELK_NAMESPACE"),
 
     KAMELET_API_VERSION("KAMELET_API_VERSION"),

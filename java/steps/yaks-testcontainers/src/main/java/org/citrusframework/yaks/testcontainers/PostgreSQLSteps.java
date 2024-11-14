@@ -16,32 +16,25 @@
 
 package org.citrusframework.yaks.testcontainers;
 
-import java.time.Duration;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.script.ScriptException;
 
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.citrusframework.Citrus;
 import org.citrusframework.TestCaseRunner;
 import org.citrusframework.annotations.CitrusFramework;
 import org.citrusframework.annotations.CitrusResource;
 import org.citrusframework.context.TestContext;
-import org.citrusframework.exceptions.CitrusRuntimeException;
-import org.citrusframework.yaks.YaksSettings;
-import org.testcontainers.containers.Network;
+import org.citrusframework.testcontainers.postgresql.PostgreSQLSettings;
+import org.citrusframework.util.FileUtils;
+import org.citrusframework.yaks.util.ResourceUtils;
 import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.ext.ScriptUtils;
-import org.testcontainers.jdbc.JdbcDatabaseDelegate;
-import org.testcontainers.utility.DockerImageName;
 
-import static java.time.temporal.ChronoUnit.SECONDS;
-import static org.citrusframework.container.FinallySequence.Builder.doFinally;
+import static org.citrusframework.testcontainers.actions.TestcontainersActionBuilder.testcontainers;
 
 public class PostgreSQLSteps {
 
@@ -56,8 +49,6 @@ public class PostgreSQLSteps {
 
     private String postgreSQLVersion = PostgreSQLSettings.getPostgreSQLVersion();
 
-    private PostgreSQLContainer<?> postgreSQLContainer;
-
     private String databaseName = PostgreSQLSettings.getDatabaseName();
     private String username = PostgreSQLSettings.getUsername();
     private String password = PostgreSQLSettings.getPassword();
@@ -68,11 +59,13 @@ public class PostgreSQLSteps {
 
     private String serviceName = PostgreSQLSettings.getServiceName();
 
+    private String initScript;
+
     @Before
     public void before(Scenario scenario) {
-        if (postgreSQLContainer == null && citrus.getCitrusContext().getReferenceResolver().isResolvable(PostgreSQLContainer.class)) {
-            postgreSQLContainer = citrus.getCitrusContext().getReferenceResolver().resolve("postgreSQLContainer", PostgreSQLContainer.class);
-            setConnectionSettings(postgreSQLContainer, context);
+        if (citrus.getCitrusContext().getReferenceResolver().isResolvable(PostgreSQLSettings.getContainerName(), PostgreSQLContainer.class)) {
+            PostgreSQLContainer<?> postgreSQLContainer = citrus.getCitrusContext().getReferenceResolver().resolve(PostgreSQLSettings.getContainerName(), PostgreSQLContainer.class);
+            PostgreSQLSettings.exposeConnectionSettings(postgreSQLContainer, serviceName, context);
         }
     }
 
@@ -113,100 +106,37 @@ public class PostgreSQLSteps {
 
     @Given("^start PostgreSQL container$")
     public void startPostgresql() {
-        env.putIfAbsent("PGDATA", "/var/lib/postgresql/data/mydata");
-
-        postgreSQLContainer = new PostgreSQLContainer<>(DockerImageName.parse("postgres").withTag(postgreSQLVersion))
-                .withUsername(username)
-                .withPassword(password)
-                .withDatabaseName(databaseName)
-                .withLabel("app", "yaks")
-                .withLabel("com.joyrex2001.kubedock.name-prefix", serviceName)
-                .withLabel("app.kubernetes.io/name", "postgresql")
-                .withLabel("app.kubernetes.io/part-of", TestContainersSettings.getTestName())
-                .withLabel("app.openshift.io/connects-to", TestContainersSettings.getTestId())
-                .withNetwork(Network.newNetwork())
-                .withNetworkAliases(serviceName)
+        runner.run(testcontainers()
+                .postgreSQL()
+                .start()
+                .version(postgreSQLVersion)
+                .serviceName(serviceName)
+                .databaseName(databaseName)
+                .username(username)
+                .password(password)
+                .withStartupTimeout(startupTimeout)
                 .withEnv(env)
-                .waitingFor(Wait.forListeningPort()
-                        .withStartupTimeout(Duration.of(startupTimeout, SECONDS)));
-
-        postgreSQLContainer.start();
-
-        String initScript = DatabaseContainerSteps.getInitScript(context);
-        if (!initScript.isEmpty()) {
-            try {
-                ScriptUtils.executeDatabaseScript(new JdbcDatabaseDelegate(postgreSQLContainer, ""), "init.sql", initScript);
-            } catch (ScriptException e) {
-                throw new CitrusRuntimeException("Failed to execute init script");
-            }
-        }
-
-        BasicDataSource postgreSQLDataSource = new BasicDataSource();
-        postgreSQLDataSource.setDriverClassName(postgreSQLContainer.getDriverClassName());
-        postgreSQLDataSource.setUrl(postgreSQLContainer.getJdbcUrl());
-        postgreSQLDataSource.setUsername(postgreSQLContainer.getUsername());
-        postgreSQLDataSource.setPassword(postgreSQLContainer.getPassword());
-
-        citrus.getCitrusContext().bind("postgreSQL", postgreSQLDataSource);
-        citrus.getCitrusContext().bind("postgreSQLContainer", postgreSQLContainer);
-
-        setConnectionSettings(postgreSQLContainer, context);
-
-        if (TestContainersSteps.autoRemoveResources) {
-            runner.run(doFinally()
-                    .actions(context -> postgreSQLContainer.stop()));
-        }
+                .initScript(initScript)
+                .autoRemove(TestContainersSteps.autoRemoveResources));
     }
 
     @Given("^stop PostgreSQL container$")
     public void stopPostgresql() {
-        if (postgreSQLContainer != null) {
-            postgreSQLContainer.stop();
-        }
+        runner.run(testcontainers()
+                .stop()
+                .containerName(PostgreSQLSettings.getContainerName()));
 
         env = new HashMap<>();
+        initScript = null;
     }
 
-    /**
-     * Sets the connection settings in current test context in the form of test variables.
-     * @param postgreSQLContainer
-     * @param context
-     */
-    private void setConnectionSettings(PostgreSQLContainer<?> postgreSQLContainer, TestContext context) {
-        if (!postgreSQLContainer.isRunning()) {
-            return;
-        }
+    @Given("^(?:D|d)atabase init script$")
+    public void setInitScript(String initScript) {
+        this.initScript = initScript;
+    }
 
-        String containerId = postgreSQLContainer.getContainerId().substring(0, 12);
-        String containerName = postgreSQLContainer.getContainerName();
-
-        if (containerName.startsWith("/")) {
-            containerName = containerName.substring(1);
-        }
-
-        context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "POSTGRESQL_HOST", postgreSQLContainer.getHost());
-        context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "POSTGRESQL_CONTAINER_IP", postgreSQLContainer.getHost());
-        context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "POSTGRESQL_CONTAINER_ID", containerId);
-        context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "POSTGRESQL_CONTAINER_NAME", containerName);
-        context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "POSTGRESQL_SERVICE_PORT", String.valueOf(postgreSQLContainer.getMappedPort(PostgreSQLContainer.POSTGRESQL_PORT)));
-        context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "POSTGRESQL_PORT", String.valueOf(postgreSQLContainer.getMappedPort(PostgreSQLContainer.POSTGRESQL_PORT)));
-        context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "POSTGRESQL_USERNAME", postgreSQLContainer.getUsername());
-        context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "POSTGRESQL_PASSWORD", postgreSQLContainer.getPassword());
-        context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "POSTGRESQL_DRIVER", postgreSQLContainer.getDriverClassName());
-        context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "POSTGRESQL_DB_NAME", postgreSQLContainer.getDatabaseName());
-        context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "POSTGRESQL_SERVICE_LOCAL_URL", postgreSQLContainer.getJdbcUrl());
-        context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "POSTGRESQL_LOCAL_URL", postgreSQLContainer.getJdbcUrl());
-
-        if (YaksSettings.isLocal() || !TestContainersSettings.isKubedockEnabled()) {
-            context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "POSTGRESQL_SERVICE_NAME", serviceName);
-            context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "POSTGRESQL_SERVICE_URL", postgreSQLContainer.getJdbcUrl());
-            context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "POSTGRESQL_URL", postgreSQLContainer.getJdbcUrl());
-        } else {
-            context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "POSTGRESQL_SERVICE_NAME", serviceName);
-            context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "POSTGRESQL_SERVICE_URL", String.format("jdbc:postgresql://%s:%s/%s", serviceName, postgreSQLContainer.getMappedPort(PostgreSQLContainer.POSTGRESQL_PORT), postgreSQLContainer.getDatabaseName()));
-            context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "POSTGRESQL_URL", String.format("jdbc:postgresql://%s:%s/%s", serviceName, postgreSQLContainer.getMappedPort(PostgreSQLContainer.POSTGRESQL_PORT), postgreSQLContainer.getDatabaseName()));
-        }
-
-        context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "POSTGRESQL_KUBE_DOCK_HOST", serviceName);
+    @Given("^load database init script ([^\\s]+)$")
+    public void loadInitScript(String file) throws IOException {
+        this.initScript = FileUtils.readToString(ResourceUtils.resolve(file, context));
     }
 }

@@ -24,8 +24,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class JmsSettings {
 
-    private static final String JMS_PROPERTY_PREFIX = "yaks.kubernetes.";
-    private static final String JMS_ENV_PREFIX = "YAKS_JMS_";
+    private static final String JMS_PROPERTY_PREFIX = "citrus.kubernetes.";
+    private static final String JMS_ENV_PREFIX = "CITRUS_JMS_";
 
     private static final String ENDPOINT_NAME_PROPERTY = JMS_PROPERTY_PREFIX + "endpoint.name";
     private static final String ENDPOINT_NAME_ENV = JMS_ENV_PREFIX + "ENDPOINT_NAME";

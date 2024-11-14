@@ -16,12 +16,8 @@
 
 package org.citrusframework.yaks.testcontainers;
 
-import java.net.URI;
-import java.time.Duration;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,15 +30,10 @@ import org.citrusframework.TestCaseRunner;
 import org.citrusframework.annotations.CitrusFramework;
 import org.citrusframework.annotations.CitrusResource;
 import org.citrusframework.context.TestContext;
-import org.citrusframework.yaks.YaksSettings;
-import org.citrusframework.yaks.kubernetes.KubernetesSettings;
-import org.citrusframework.yaks.kubernetes.KubernetesVariableNames;
-import org.citrusframework.yaks.testcontainers.aws2.AWS2Container;
-import org.testcontainers.containers.Network;
-import org.testcontainers.containers.wait.strategy.Wait;
+import org.citrusframework.testcontainers.aws2.LocalStackContainer;
+import org.citrusframework.testcontainers.aws2.LocalStackSettings;
 
-import static java.time.temporal.ChronoUnit.SECONDS;
-import static org.citrusframework.container.FinallySequence.Builder.doFinally;
+import static org.citrusframework.testcontainers.actions.TestcontainersActionBuilder.testcontainers;
 
 public class LocalStackSteps {
 
@@ -58,8 +49,7 @@ public class LocalStackSteps {
     private String localStackVersion = LocalStackSettings.getVersion();
     private int startupTimeout = LocalStackSettings.getStartupTimeout();
 
-    private AWS2Container aws2Container;
-    private final Set<AWS2Container.AWS2Service> services = new HashSet<>();
+    private Set<LocalStackContainer.Service> services = new HashSet<>();
 
     private Map<String, String> env = new HashMap<>();
 
@@ -67,10 +57,9 @@ public class LocalStackSteps {
 
     @Before
     public void before(Scenario scenario) {
-        if (aws2Container == null && citrus.getCitrusContext().getReferenceResolver().isResolvable(AWS2Container.class)) {
-            aws2Container = citrus.getCitrusContext().getReferenceResolver().resolve("aws2Container", AWS2Container.class);
-            services.addAll(Arrays.asList(aws2Container.getServices()));
-            exposeConnectionSettings(aws2Container, context);
+        if (citrus.getCitrusContext().getReferenceResolver().isResolvable(LocalStackSettings.getContainerName(), LocalStackContainer.class)) {
+            LocalStackContainer aws2Container = citrus.getCitrusContext().getReferenceResolver().resolve(LocalStackSettings.getContainerName(), LocalStackContainer.class);
+            LocalStackSettings.exposeConnectionSettings(aws2Container, serviceName, context);
         }
     }
 
@@ -96,110 +85,30 @@ public class LocalStackSteps {
 
     @Given("^Enable service (S3|KINESIS|SQS|SNS|DYNAMODB|DYNAMODB_STREAMS|IAM|API_GATEWAY|FIREHOSE|LAMBDA)$")
     public void enableService(String service) {
-        services.add(AWS2Container.AWS2Service.valueOf(service));
+        services.add(LocalStackContainer.Service.valueOf(service));
     }
 
     @Given("^start LocalStack container$")
     public void startLocalStack() {
-        aws2Container = new AWS2Container(localStackVersion)
-                .withServices(services.toArray(AWS2Container.AWS2Service[]::new))
-                .withLabel("app", "yaks")
-                .withLabel("com.joyrex2001.kubedock.name-prefix", serviceName)
-                .withLabel("app.kubernetes.io/name", "build")
-                .withLabel("app.kubernetes.io/part-of", TestContainersSettings.getTestName())
-                .withLabel("app.openshift.io/connects-to", TestContainersSettings.getTestId())
-                .withNetwork(Network.newNetwork())
-                .withNetworkAliases(serviceName)
+        runner.run(testcontainers()
+                .localstack()
+                .start()
+                .version(localStackVersion)
+                .serviceName(serviceName)
+                .withStartupTimeout(startupTimeout)
                 .withEnv(env)
-                .waitingFor(Wait.forListeningPort()
-                        .withStartupTimeout(Duration.of(startupTimeout, SECONDS)));
-
-        aws2Container.start();
-
-        citrus.getCitrusContext().bind("aws2Container", aws2Container);
-
-        exposeConnectionSettings(aws2Container, context);
-
-        if (TestContainersSteps.autoRemoveResources) {
-            runner.run(doFinally()
-                    .actions(context -> aws2Container.stop()));
-        }
+                .withServices(services)
+                .autoRemove(TestContainersSteps.autoRemoveResources));
     }
 
     @Given("^stop LocalStack container$")
     public void stopLocalStack() {
-        if (aws2Container != null) {
-            aws2Container.stop();
-        }
+        runner.run(testcontainers()
+                .localstack()
+                .stop()
+                .containerName(LocalStackSettings.getContainerName()));
 
         env = new HashMap<>();
-    }
-
-    /**
-     * Sets the connection settings in current test context in the form of test variables.
-     * @param aws2Container
-     * @param context
-     */
-    private void exposeConnectionSettings(AWS2Container aws2Container, TestContext context) {
-        if (aws2Container.isRunning()) {
-            URI serviceEndpoint = aws2Container.getServiceEndpoint();
-
-            String containerId = aws2Container.getContainerId().substring(0, 12);
-            String containerName = aws2Container.getContainerName();
-
-            if (containerName.startsWith("/")) {
-                containerName = containerName.substring(1);
-            }
-
-            context.setVariable(getEnvVarName("HOST"), aws2Container.getHost());
-            context.setVariable(getEnvVarName("CONTAINER_IP"), aws2Container.getHost());
-            context.setVariable(getEnvVarName("CONTAINER_ID"), containerId);
-            context.setVariable(getEnvVarName("CONTAINER_NAME"), containerName);
-            context.setVariable(getEnvVarName("REGION"), aws2Container.getRegion());
-            context.setVariable(getEnvVarName("ACCESS_KEY"), aws2Container.getAccessKey());
-            context.setVariable(getEnvVarName("SECRET_KEY"), aws2Container.getSecretKey());
-            context.setVariable(getEnvVarName("SERVICE_PORT"), serviceEndpoint.getPort());
-            context.setVariable(getEnvVarName("SERVICE_LOCAL_URL"), String.format("http://localhost:%s", serviceEndpoint.getPort()));
-
-            if (YaksSettings.isLocal() || !TestContainersSettings.isKubedockEnabled()) {
-                context.setVariable(getEnvVarName("SERVICE_NAME"), serviceName);
-                context.setVariable(getEnvVarName("SERVICE_URL"), String.format("http://localhost:%s", serviceEndpoint.getPort()));
-            } else {
-                context.setVariable(getEnvVarName("SERVICE_NAME"), serviceName);
-                context.setVariable(getEnvVarName("SERVICE_URL"), String.format("http://%s:%s", serviceName, serviceEndpoint.getPort()));
-            }
-
-            services.forEach(service -> {
-                String aws2ServiceName = service.getServiceName().toUpperCase(Locale.US);
-
-                if (YaksSettings.isLocal() || !TestContainersSettings.isKubedockEnabled()) {
-                    context.setVariable(getEnvVarName(String.format("%s_URL", aws2ServiceName)), String.format("http://localhost:%s", serviceEndpoint.getPort()));
-                } else {
-                    context.setVariable(getEnvVarName(String.format("%s_URL", aws2ServiceName)), String.format("http://%s:%s", serviceName, serviceEndpoint.getPort()));
-                }
-
-                context.setVariable(getEnvVarName(String.format("%s_LOCAL_URL", aws2ServiceName)), String.format("http://localhost:%s", serviceEndpoint.getPort()));
-                context.setVariable(getEnvVarName(String.format("%s_PORT", aws2ServiceName)), serviceEndpoint.getPort());
-            });
-
-            context.setVariable(getEnvVarName("KUBE_DOCK_SERVICE_URL"), String.format("http://%s:%s", serviceName, serviceEndpoint.getPort()));
-            context.setVariable(getEnvVarName("KUBE_DOCK_HOST"), serviceName);
-
-            for (Map.Entry<Object, Object> connectionProperty : aws2Container.getConnectionProperties().entrySet()) {
-                context.setVariable(connectionProperty.getKey().toString(), connectionProperty.getValue().toString());
-            }
-        }
-    }
-
-    private String getEnvVarName(String variable) {
-        return String.format("%sLOCALSTACK_%s", TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX, variable);
-    }
-
-    private String getNamespace(TestContext context) {
-        if (context.getVariables().containsKey(KubernetesVariableNames.NAMESPACE.value())) {
-            return context.getVariable(KubernetesVariableNames.NAMESPACE.value());
-        }
-
-        return KubernetesSettings.getNamespace();
+        services = new HashSet<>();
     }
 }

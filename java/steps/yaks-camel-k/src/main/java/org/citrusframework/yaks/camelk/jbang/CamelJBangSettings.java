@@ -25,8 +25,8 @@ import java.util.Optional;
  */
 public final class CamelJBangSettings {
 
-    private static final String JBANG_PROPERTY_PREFIX = "yaks.jbang.";
-    private static final String JBANG_ENV_PREFIX = "YAKS_JBANG_";
+    private static final String JBANG_PROPERTY_PREFIX = "citrus.jbang.";
+    private static final String JBANG_ENV_PREFIX = "CITRUS_JBANG_";
 
     private static final String CAMEL_APP_PROPERTY = JBANG_PROPERTY_PREFIX + "camel.app";
     private static final String CAMEL_APP_ENV = JBANG_ENV_PREFIX + "CAMEL_APP";

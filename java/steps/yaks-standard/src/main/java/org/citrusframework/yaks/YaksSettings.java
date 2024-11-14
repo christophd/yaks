@@ -36,34 +36,34 @@ public class YaksSettings {
     /** Logger */
     private static final Logger LOG = LoggerFactory.getLogger(YaksSettings.class);
 
-    private static final String YAKS_PROPERTY_PREFIX = "yaks.";
-    private static final String YAKS_ENV_PREFIX = "YAKS_";
+    private static final String CITRUS_PROPERTY_PREFIX = "citrus.";
+    private static final String CITRUS_ENV_PREFIX = "CITRUS_";
 
     private static final String CLUSTER_WILDCARD_DOMAIN_PROPERTY = "cluster.wildcard.domain";
     private static final String CLUSTER_WILDCARD_DOMAIN_ENV = "CLUSTER_WILDCARD_DOMAIN";
     public static final String DEFAULT_DOMAIN_SUFFIX = "svc.cluster.local";
 
-    private static final String NAMESPACE_PROPERTY = YAKS_PROPERTY_PREFIX + "namespace";
-    private static final String NAMESPACE_ENV = YAKS_ENV_PREFIX + "NAMESPACE";
+    private static final String NAMESPACE_PROPERTY = CITRUS_PROPERTY_PREFIX + "namespace";
+    private static final String NAMESPACE_ENV = CITRUS_ENV_PREFIX + "NAMESPACE";
     private static final String NAMESPACE_DEFAULT = "default";
 
-    private static final String OPERATOR_NAMESPACE_PROPERTY = YAKS_PROPERTY_PREFIX + "namespace";
-    private static final String OPERATOR_NAMESPACE_ENV = YAKS_ENV_PREFIX + "NAMESPACE";
+    private static final String OPERATOR_NAMESPACE_PROPERTY = CITRUS_PROPERTY_PREFIX + "namespace";
+    private static final String OPERATOR_NAMESPACE_ENV = CITRUS_ENV_PREFIX + "NAMESPACE";
 
-    private static final String CLUSTER_TYPE_PROPERTY = YAKS_PROPERTY_PREFIX + "cluster.type";
-    private static final String CLUSTER_TYPE_ENV = YAKS_ENV_PREFIX + "CLUSTER_TYPE";
+    private static final String CLUSTER_TYPE_PROPERTY = CITRUS_PROPERTY_PREFIX + "cluster.type";
+    private static final String CLUSTER_TYPE_ENV = CITRUS_ENV_PREFIX + "CLUSTER_TYPE";
     private static final String CLUSTER_TYPE_DEFAULT = YaksClusterType.KUBERNETES.name();
 
-    private static final String TEST_ID_PROPERTY = YAKS_PROPERTY_PREFIX + "test.id";
-    private static final String TEST_ID_ENV = YAKS_ENV_PREFIX + "TEST_ID";
+    private static final String TEST_ID_PROPERTY = CITRUS_PROPERTY_PREFIX + "test.id";
+    private static final String TEST_ID_ENV = CITRUS_ENV_PREFIX + "TEST_ID";
     private static final String TEST_ID_DEFAULT = "yaks-test";
 
-    private static final String DEFAULT_MESSAGE_TYPE_PROPERTY = YAKS_PROPERTY_PREFIX + "default.message.type";
-    private static final String DEFAULT_MESSAGE_TYPE_ENV = YAKS_ENV_PREFIX + "DEFAULT_MESSAGE_TYPE";
+    private static final String DEFAULT_MESSAGE_TYPE_PROPERTY = CITRUS_PROPERTY_PREFIX + "default.message.type";
+    private static final String DEFAULT_MESSAGE_TYPE_ENV = CITRUS_ENV_PREFIX + "DEFAULT_MESSAGE_TYPE";
     private static final String DEFAULT_MESSAGE_TYPE_DEFAULT = CitrusSettings.DEFAULT_MESSAGE_TYPE;
 
-    private static final String TERMINATION_LOG_PROPERTY = YAKS_PROPERTY_PREFIX + "termination.log";
-    private static final String TERMINATION_LOG_ENV = YAKS_ENV_PREFIX + "TERMINATION_LOG";
+    private static final String TERMINATION_LOG_PROPERTY = CITRUS_PROPERTY_PREFIX + "termination.log";
+    private static final String TERMINATION_LOG_ENV = CITRUS_ENV_PREFIX + "TERMINATION_LOG";
     private static final String TERMINATION_LOG_DEFAULT = "target/termination.log";
 
     /**

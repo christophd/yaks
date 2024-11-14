@@ -16,15 +16,14 @@
 
 package org.citrusframework.yaks.testcontainers;
 
+import io.cucumber.java.en.Given;
 import org.citrusframework.Citrus;
 import org.citrusframework.TestCaseRunner;
 import org.citrusframework.annotations.CitrusFramework;
 import org.citrusframework.annotations.CitrusResource;
-import io.cucumber.java.en.Given;
+import org.citrusframework.testcontainers.TestContainersSettings;
 
 public class TestContainersSteps {
-
-    protected static final String TESTCONTAINERS_VARIABLE_PREFIX = "YAKS_TESTCONTAINERS_";
 
     @CitrusResource
     private TestCaseRunner runner;

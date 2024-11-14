@@ -21,8 +21,8 @@ package org.citrusframework.yaks.openapi;
  */
 public class OpenApiSettings {
 
-    private static final String OPENAPI_PROPERTY_PREFIX = "yaks.openapi.";
-    private static final String OPENAPI_ENV_PREFIX = "YAKS_OPENAPI_";
+    private static final String OPENAPI_PROPERTY_PREFIX = "citrus.openapi.";
+    private static final String OPENAPI_ENV_PREFIX = "CITRUS_OPENAPI_";
 
     private static final String TIMEOUT_PROPERTY = OPENAPI_PROPERTY_PREFIX + ".timeout";
     private static final String TIMEOUT_ENV = OPENAPI_ENV_PREFIX + "_TIMEOUT";

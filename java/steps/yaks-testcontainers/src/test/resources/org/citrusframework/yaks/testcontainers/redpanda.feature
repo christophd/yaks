@@ -13,7 +13,7 @@ Feature: Redpanda
       | key     | citrus:randomNumber(4) |
       | message | Hello Redpanda |
     Given new Kafka connection
-      | url | ${YAKS_TESTCONTAINERS_REDPANDA_LOCAL_BOOTSTRAP_SERVERS} |
+      | url | ${CITRUS_TESTCONTAINERS_REDPANDA_LOCAL_BOOTSTRAP_SERVERS} |
     And Kafka message key: ${key}
     When send Kafka message with body and headers: ${message}
       | messageId | ${key} |

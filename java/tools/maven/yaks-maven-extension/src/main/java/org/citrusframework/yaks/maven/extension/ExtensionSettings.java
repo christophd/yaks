@@ -23,31 +23,31 @@ public final class ExtensionSettings {
 
     public static final String FEATURE_FILE_EXTENSION = ".feature";
 
-    public static final String TESTS_PATH_KEY = "yaks.tests.path";
-    public static final String TESTS_PATH_ENV = "YAKS_TESTS_PATH";
+    public static final String TESTS_PATH_KEY = "citrus.tests.path";
+    public static final String TESTS_PATH_ENV = "CITRUS_TESTS_PATH";
 
-    public static final String SECRETS_PATH_KEY = "yaks.secrets.path";
-    public static final String SECRETS_PATH_ENV = "YAKS_SECRETS_PATH";
+    public static final String SECRETS_PATH_KEY = "citrus.secrets.path";
+    public static final String SECRETS_PATH_ENV = "CITRUS_SECRETS_PATH";
 
-    public static final String SETTINGS_FILE_DEFAULT = "classpath:yaks.properties";
-    public static final String SETTINGS_FILE_KEY = "yaks.settings.file";
-    public static final String SETTINGS_FILE_ENV = "YAKS_SETTINGS_FILE";
+    public static final String SETTINGS_FILE_DEFAULT = "classpath:citrus.properties";
+    public static final String SETTINGS_FILE_KEY = "citrus.settings.file";
+    public static final String SETTINGS_FILE_ENV = "CITRUS_SETTINGS_FILE";
 
-    public static final String DEPENDENCIES_SETTING_KEY = "yaks.dependencies";
-    public static final String DEPENDENCIES_SETTING_ENV = "YAKS_DEPENDENCIES";
+    public static final String DEPENDENCIES_SETTING_KEY = "citrus.dependencies";
+    public static final String DEPENDENCIES_SETTING_ENV = "CITRUS_DEPENDENCIES";
 
-    public static final String REPOSITORIES_SETTING_KEY = "yaks.repositories";
-    public static final String REPOSITORIES_SETTING_ENV = "YAKS_REPOSITORIES";
+    public static final String REPOSITORIES_SETTING_KEY = "citrus.repositories";
+    public static final String REPOSITORIES_SETTING_ENV = "CITRUS_REPOSITORIES";
 
-    public static final String PLUGIN_REPOSITORIES_SETTING_KEY = "yaks.plugin.repositories";
-    public static final String PLUGIN_REPOSITORIES_SETTING_ENV = "YAKS_PLUGIN_REPOSITORIES";
+    public static final String PLUGIN_REPOSITORIES_SETTING_KEY = "citrus.plugin.repositories";
+    public static final String PLUGIN_REPOSITORIES_SETTING_ENV = "CITRUS_PLUGIN_REPOSITORIES";
 
-    public static final String LOGGERS_SETTING_KEY = "yaks.loggers";
-    public static final String LOGGERS_SETTING_ENV = "YAKS_LOGGERS";
+    public static final String LOGGERS_SETTING_KEY = "citrus.loggers";
+    public static final String LOGGERS_SETTING_ENV = "CITRUS_LOGGERS";
     public static final String LOGGING_LEVEL_PREFIX = "logging.level.";
 
-    public static final String LOG_PATTERN_LAYOUT_SETTING_KEY = "yaks.log.pattern.layout";
-    public static final String LOG_PATTERN_LAYOUT_SETTING_ENV = "YAKS_LOG_PATTERN_LAYOUT";
+    public static final String LOG_PATTERN_LAYOUT_SETTING_KEY = "citrus.log.pattern.layout";
+    public static final String LOG_PATTERN_LAYOUT_SETTING_ENV = "CITRUS_LOG_PATTERN_LAYOUT";
     public static final String LOG_PATTERN_LAYOUT_SETTING_DEFAULT = "%-5level| %msg%n";
 
     /**

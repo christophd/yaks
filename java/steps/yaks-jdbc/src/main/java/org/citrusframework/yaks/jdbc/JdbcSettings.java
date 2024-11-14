@@ -21,8 +21,8 @@ package org.citrusframework.yaks.jdbc;
  */
 public class JdbcSettings {
 
-    private static final String JDBC_PROPERTY_PREFIX = "yaks.jdbc.";
-    private static final String JDBC_ENV_PREFIX = "YAKS_JDBC_";
+    private static final String JDBC_PROPERTY_PREFIX = "citrus.jdbc.";
+    private static final String JDBC_ENV_PREFIX = "CITRUS_JDBC_";
 
     private static final String MAX_ATTEMPTS_PROPERTY = JDBC_PROPERTY_PREFIX + "max.attempts";
     private static final String MAX_ATTEMPTS_ENV = JDBC_ENV_PREFIX + "MAX_ATTEMPTS";

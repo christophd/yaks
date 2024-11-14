@@ -36,15 +36,15 @@ public class FileBasedRepositoryLoaderTest {
 
     @Test
     public void shouldLoadFromPropertyFile() throws LifecycleExecutionException {
-        System.setProperty(ExtensionSettings.SETTINGS_FILE_KEY, "classpath:yaks.properties");
+        System.setProperty(ExtensionSettings.SETTINGS_FILE_KEY, "classpath:citrus.properties");
         List<Repository> repositoryList = loader.load(logger, false);
         TestHelper.verifyRepositories(repositoryList);
 
-        System.setProperty(ExtensionSettings.SETTINGS_FILE_KEY, "classpath:yaks.settings.yaml");
+        System.setProperty(ExtensionSettings.SETTINGS_FILE_KEY, "classpath:citrus.settings.yaml");
         repositoryList = loader.load(logger, false);
         TestHelper.verifyRepositories(repositoryList);
 
-        System.setProperty(ExtensionSettings.SETTINGS_FILE_KEY, "classpath:yaks.settings.json");
+        System.setProperty(ExtensionSettings.SETTINGS_FILE_KEY, "classpath:citrus.settings.json");
         repositoryList = loader.load(logger, false);
         TestHelper.verifyRepositories(repositoryList);
     }

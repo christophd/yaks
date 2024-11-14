@@ -16,7 +16,7 @@ version with an environment variable set on the YAKS configuration.
 .Overwrite Kubernetes API version
 [source,bash]
 ----
-YAKS_KUBERNETES_API_VERSION=v1
+CITRUS_KUBERNETES_API_VERSION=v1
 ----
 
 This sets the Kubernetes API version for all operations.

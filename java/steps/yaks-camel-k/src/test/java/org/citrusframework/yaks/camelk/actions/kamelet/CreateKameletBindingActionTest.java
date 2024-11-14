@@ -68,7 +68,7 @@ public class CreateKameletBindingActionTest {
                 .resource(Resources.fromClasspath("kafka-source-binding.yaml"))
                 .build();
 
-        context.setVariable("YAKS_NAMESPACE", "default");
+        context.setVariable("CITRUS_NAMESPACE", "default");
         context.setVariable("bootstrap.server.host", "my-cluster-kafka-bootstrap");
         context.setVariable("bootstrap.server.port", "9092");
         context.setVariable("topic", "my-topic");
@@ -85,7 +85,7 @@ public class CreateKameletBindingActionTest {
 
     @Test
     public void shouldCreateLocalBinding() {
-        System.setProperty("yaks.jbang.camel.dump.integration.output", "true");
+        System.setProperty("citrus.jbang.camel.dump.integration.output", "true");
 
         CreateKameletBindingAction action = new CreateKameletBindingAction.Builder()
                 .client(kubernetesClient)

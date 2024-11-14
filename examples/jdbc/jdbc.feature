@@ -6,7 +6,7 @@ Feature: JDBC API
     CREATE TABLE IF NOT EXISTS todo (id SERIAL PRIMARY KEY, task VARCHAR, completed INTEGER);
     """
     Then start PostgreSQL container
-    And log 'Started PostgreSQL container: ${YAKS_TESTCONTAINERS_POSTGRESQL_CONTAINER_NAME}'
+    And log 'Started PostgreSQL container: ${CITRUS_TESTCONTAINERS_POSTGRESQL_CONTAINER_NAME}'
 
   Scenario: INSERT task
     Given Data source: postgreSQL

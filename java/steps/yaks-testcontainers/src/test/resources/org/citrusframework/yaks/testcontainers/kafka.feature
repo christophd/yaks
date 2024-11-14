@@ -13,7 +13,7 @@ Feature: Kafka
       | key     | citrus:randomNumber(4) |
       | message | Hello Kafka |
     Given new Kafka connection
-      | url | ${YAKS_TESTCONTAINERS_KAFKA_LOCAL_BOOTSTRAP_SERVERS} |
+      | url | ${CITRUS_TESTCONTAINERS_KAFKA_LOCAL_BOOTSTRAP_SERVERS} |
     And Kafka message key: ${key}
     When send Kafka message with body and headers: ${message}
       | messageId | ${key} |

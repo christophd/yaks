@@ -453,8 +453,10 @@ public class HttpClientSteps implements HttpSteps {
                 .message(response)
                 .headerNameIgnoreCase(headerNameIgnoreCase);
 
-        responseBuilder.validate(pathExpression().expressions(bodyValidationExpressions));
-        bodyValidationExpressions.clear();
+        if (!bodyValidationExpressions.isEmpty()) {
+            responseBuilder.validate(pathExpression().expressions(bodyValidationExpressions));
+            bodyValidationExpressions.clear();
+        }
 
         responseBuilder.timeout(timeout);
         responseBuilder.type(responseMessageType);

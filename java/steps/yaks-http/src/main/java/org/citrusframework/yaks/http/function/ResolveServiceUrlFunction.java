@@ -62,7 +62,7 @@ public class ResolveServiceUrlFunction implements Function {
 
             return String.format("%slocalhost%s", scheme, servicePort > 0 ? ":" + servicePort : "");
         } else {
-            return String.format("%s%s.%s", scheme, serviceName, context.getVariable("YAKS_NAMESPACE"));
+            return String.format("%s%s.%s", scheme, serviceName, context.getVariable("CITRUS_NAMESPACE"));
         }
     }
 }

@@ -8,7 +8,7 @@ Feature: AWS S3
     Given Enable service S3
     Given start LocalStack container
     Given HTTP request timeout is 20000 ms
-    And wait for URL ${YAKS_TESTCONTAINERS_LOCALSTACK_SERVICE_URL}
+    And wait for URL ${CITRUS_TESTCONTAINERS_LOCALSTACK_SERVICE_URL}
 
   Scenario: Verify AWS S3 events
     # Create S3 client

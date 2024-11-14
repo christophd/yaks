@@ -23,8 +23,8 @@ import org.citrusframework.yaks.YaksSettings;
  */
 public class KafkaSettings {
 
-    private static final String KAFKA_PROPERTY_PREFIX = "yaks.kafka.";
-    private static final String KAFKA_ENV_PREFIX = "YAKS_KAFKA_";
+    private static final String KAFKA_PROPERTY_PREFIX = "citrus.kafka.";
+    private static final String KAFKA_ENV_PREFIX = "CITRUS_KAFKA_";
 
     private static final String CONSUMER_TIMEOUT_PROPERTY = KAFKA_PROPERTY_PREFIX + "timeout";
     private static final String CONSUMER_TIMEOUT_ENV = KAFKA_ENV_PREFIX + "TIMEOUT";

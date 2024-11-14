@@ -35,7 +35,7 @@ public class ResolveServiceUrlFunctionTest {
     public void shouldResolveService() {
         TestContext context = TestContextFactory.newInstance().getObject();
 
-        context.setVariable("YAKS_NAMESPACE", "default");
+        context.setVariable("CITRUS_NAMESPACE", "default");
 
         Assert.assertEquals("http://test-service.default", function.execute(Collections.singletonList("test-service"), context));
         Assert.assertEquals("http://test-service.default", function.execute(Arrays.asList("test-service", "8080"), context));
@@ -45,17 +45,16 @@ public class ResolveServiceUrlFunctionTest {
     public void shouldResolveSecureService() {
         TestContext context = TestContextFactory.newInstance().getObject();
 
-        context.setVariable("YAKS_NAMESPACE", "default");
+        context.setVariable("CITRUS_NAMESPACE", "default");
 
         Assert.assertEquals("https://test-service.default", function.execute(Arrays.asList("test-service", "TRUE"), context));
         Assert.assertEquals("https://test-service.default", function.execute(Arrays.asList("test-service", "8080", "TRUE"), context));
-
     }
 
     @Test
     public void shouldResolveLocalService() {
         try {
-            System.setProperty("yaks.cluster.type", YaksClusterType.LOCAL.name());
+            System.setProperty("citrus.cluster.type", YaksClusterType.LOCAL.name());
             TestContext context = TestContextFactory.newInstance().getObject();
 
             context.getReferenceResolver().bind("test-service", new HttpServerBuilder()
@@ -67,7 +66,7 @@ public class ResolveServiceUrlFunctionTest {
             Assert.assertEquals("http://localhost", function.execute(Collections.singletonList("foo-service"), context));
             Assert.assertEquals("http://localhost:8080", function.execute(Arrays.asList("foo-service", "8080"), context));
         } finally {
-            System.setProperty("yaks.cluster.type", YaksClusterType.KUBERNETES.name());
+            System.setProperty("citrus.cluster.type", YaksClusterType.KUBERNETES.name());
         }
     }
 

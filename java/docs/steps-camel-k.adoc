@@ -35,7 +35,7 @@ version with a environment variable set on the YAKS configuration.
 .Overwrite Camel K API version
 [source,bash]
 ----
-YAKS_CAMELK_API_VERSION=v1
+CITRUS_CAMELK_API_VERSION=v1
 ----
 
 This sets the Camel K API version for all operations.

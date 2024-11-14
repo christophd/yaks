@@ -19,7 +19,6 @@ package org.citrusframework.yaks.camel;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -30,42 +29,32 @@ import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import jakarta.xml.bind.JAXBException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.model.ModelCamelContext;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.spring.xml.CamelRouteContextFactoryBean;
 import org.citrusframework.Citrus;
 import org.citrusframework.CitrusSettings;
 import org.citrusframework.TestCaseRunner;
 import org.citrusframework.annotations.CitrusFramework;
 import org.citrusframework.annotations.CitrusResource;
-import org.citrusframework.camel.dsl.CamelSupport;
+import org.citrusframework.camel.context.CamelReferenceResolver;
 import org.citrusframework.camel.endpoint.CamelEndpoint;
 import org.citrusframework.camel.endpoint.CamelEndpointConfiguration;
 import org.citrusframework.camel.endpoint.CamelSyncEndpoint;
 import org.citrusframework.camel.endpoint.CamelSyncEndpointConfiguration;
-import org.citrusframework.camel.util.CamelUtils;
-import org.citrusframework.common.InitializingPhase;
 import org.citrusframework.context.TestContext;
 import org.citrusframework.exceptions.CitrusRuntimeException;
 import org.citrusframework.spi.Resource;
 import org.citrusframework.util.FileUtils;
-import org.citrusframework.xml.StringSource;
-import org.citrusframework.yaks.groovy.GroovyShellUtils;
 import org.citrusframework.yaks.util.ResourceUtils;
-import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.core.io.ByteArrayResource;
 
 import static org.citrusframework.actions.ReceiveMessageAction.Builder.receive;
 import static org.citrusframework.actions.SendMessageAction.Builder.send;
-import static org.citrusframework.camel.actions.CamelRouteActionBuilder.camel;
+import static org.citrusframework.camel.dsl.CamelSupport.camel;
 
 public class CamelSteps {
 
@@ -174,15 +163,9 @@ public class CamelSteps {
 
     @Given("^bind to Camel registry ([^\"\\s]+)\\.groovy$")
     public void bindComponent(String name, String configurationScript) {
-        Object component = GroovyShellUtils.run(new ImportCustomizer(),
-                context.replaceDynamicContentInString(configurationScript), citrus, context);
-
-        if (component instanceof InitializingPhase) {
-            ((InitializingPhase) component).initialize();
-        }
-
-        camelContext().getRegistry().bind(name, component);
-        citrus.getCitrusContext().bind(name, component);
+        runner.run(camel().camelContext(camelContext())
+                .bind()
+                .component(name, configurationScript));
     }
 
     @Given("^load to Camel registry ([^\"\\s]+)\\.groovy$")
@@ -200,69 +183,18 @@ public class CamelSteps {
 
     @Given("^Camel route ([^\\s]+)\\.xml")
     public void camelRouteXml(String id, String routeSpec) throws Exception {
-        String routeContext = createRouteContext(id, routeSpec);
-        ModelCamelContext camelContext = (ModelCamelContext) camelContext();
-
-        List<RouteDefinition> routesToUse;
-        try {
-            Object value = CamelUtils.getJaxbContext().createUnmarshaller().unmarshal(new StringSource(context.replaceDynamicContentInString(routeContext)));
-            if (value instanceof CamelRouteContextFactoryBean) {
-                CamelRouteContextFactoryBean factoryBean = (CamelRouteContextFactoryBean) value;
-                routesToUse = factoryBean.getRoutes();
-            } else {
-                throw new CitrusRuntimeException(String.format("Failed to parse routes from given route context - expected %s but found %s",
-                        CamelRouteContextFactoryBean.class, value.getClass()));
-            }
-        } catch (JAXBException e) {
-            throw new CitrusRuntimeException("Failed to create the JAXB unmarshaller", e);
-        }
-
-        camelContext.addRoutes(new RouteBuilder(camelContext) {
-            @Override
-            public void configure() throws Exception {
-                for (RouteDefinition routeDefinition : routesToUse) {
-                    try {
-                        getRouteCollection().getRoutes().add(routeDefinition);
-                    } catch (Exception e) {
-                        throw new CitrusRuntimeException(String.format("Failed to create route definition '%s' in context '%s'", routeDefinition.getId(), camelContext.getName()), e);
-                    }
-                }
-            }
-        });
-    }
-
-    private String createRouteContext(String routeId, String routeSpec) {
-        final String routeContextElement = "<routeContext xmlns=\"http://camel.apache.org/schema/spring\">%s</routeContext>";
-
-        if (routeSpec.startsWith("<route>")) {
-            return String.format(routeContextElement, String.format("<route id=\"%s\">", routeId) + routeSpec.substring("<route>".length()));
-        } else if (routeSpec.startsWith("<routeContext>")) {
-            return String.format(routeContextElement, routeSpec.substring("<routeContext>".length(), routeSpec.length() - "</routeContext>".length()));
-        } else if (routeSpec.startsWith("<routeContext")) {
-            return routeSpec;
-        } else {
-            return String.format(routeContextElement, String.format("<route id=\"%s\">", routeId) + routeSpec + "</route>");
-        }
+        runner.run(camel().camelContext(camelContext())
+                .route()
+                .create(routeSpec)
+                .routeId(id));
     }
 
     @Given("^Camel route ([^\\s]+)\\.groovy")
     public void camelRouteGroovy(String id, String route) throws Exception {
-        RouteBuilder routeBuilder = new RouteBuilder(camelContext()) {
-            @Override
-            public void configure() throws Exception {
-                ImportCustomizer ic = new ImportCustomizer();
-                ic.addStarImports("org.apache.camel");
-
-                GroovyShellUtils.run(ic, this, context.replaceDynamicContentInString(route), citrus, context);
-            }
-
-            @Override
-            protected void configureRoute(RouteDefinition route) {
-                route.routeId(id);
-            }
-        };
-
-        camelContext().addRoutes(routeBuilder);
+        runner.run(camel().camelContext(camelContext())
+                .route()
+                .create(route)
+                .routeId(id));
     }
 
     @Given("^load Camel route ([^\\s]+)\\.(groovy|xml)")
@@ -280,20 +212,23 @@ public class CamelSteps {
 
     @Given("^start Camel route ([^\\s]+)$")
     public void startRoute(String routeId) {
-        runner.run(camel().context(camelContext())
-                                     .start(routeId));
+        runner.run(camel().camelContext(camelContext())
+                        .route()
+                        .start(routeId));
     }
 
     @Given("^stop Camel route ([^\\s]+)$")
     public void stopRoute(String routeId) {
-        runner.run(camel().context(camelContext())
-                                     .stop(routeId));
+        runner.run(camel().camelContext(camelContext())
+                        .route()
+                        .stop(routeId));
     }
 
     @Given("^remove Camel route ([^\\s]+)$")
     public void removeRoute(String routeId) {
-        runner.run(camel().context(camelContext())
-                                     .remove(routeId));
+        runner.run(camel().camelContext(camelContext())
+                        .route()
+                        .remove(routeId));
     }
 
     @Given("^Camel exchange message header ([^\\s]+)(?:=| is )\"(.+)\"$")
@@ -352,7 +287,7 @@ public class CamelSteps {
     public void receiveExchange(String endpointUri) {
         runner.run(receive().endpoint(camelEndpoint(endpointUri))
                 .timeout(timeout)
-                .transform(CamelSupport.camel(camelContext()).convertBodyTo(String.class))
+                .transform(camel(camelContext()).convertBodyTo(String.class))
                 .message()
                 .type(messageType)
                 .body(body)

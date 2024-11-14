@@ -110,12 +110,12 @@ public class CamelKSteps {
         supportVariablesInSources = true;
     }
 
-	@Given("^Disable stop on error status$")
+	@Given("^Disable Camel K stop on error status$")
     public void disableStopOnErrorStatus() {
         stopOnErrorStatus = false;
     }
 
-	@Given("^Enable stop on error status$")
+	@Given("^Enable Camel K stop on error status$")
     public void enableStopOnErrorStatus() {
         stopOnErrorStatus = true;
     }

@@ -38,15 +38,15 @@ public class FileBasedDependencyLoaderTest {
 
     @Test
     public void shouldLoadFromPropertyFile() throws LifecycleExecutionException {
-        System.setProperty(ExtensionSettings.SETTINGS_FILE_KEY, "classpath:yaks.properties");
+        System.setProperty(ExtensionSettings.SETTINGS_FILE_KEY, "classpath:citrus.properties");
         List<Dependency> dependencyList = loader.load(properties, logger);
         TestHelper.verifyDependencies(dependencyList);
 
-        System.setProperty(ExtensionSettings.SETTINGS_FILE_KEY, "classpath:yaks.settings.yaml");
+        System.setProperty(ExtensionSettings.SETTINGS_FILE_KEY, "classpath:citrus.settings.yaml");
         dependencyList = loader.load(properties, logger);
         TestHelper.verifyDependencies(dependencyList);
 
-        System.setProperty(ExtensionSettings.SETTINGS_FILE_KEY, "classpath:yaks.settings.json");
+        System.setProperty(ExtensionSettings.SETTINGS_FILE_KEY, "classpath:citrus.settings.json");
         dependencyList = loader.load(properties, logger);
         TestHelper.verifyDependencies(dependencyList);
     }

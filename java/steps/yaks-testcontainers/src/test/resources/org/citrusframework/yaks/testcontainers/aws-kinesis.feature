@@ -9,7 +9,7 @@ Feature: AWS KINESIS
     Given Enable service KINESIS
     Given start LocalStack container
     Given HTTP request timeout is 20000 ms
-    And wait for URL ${YAKS_TESTCONTAINERS_LOCALSTACK_SERVICE_URL}
+    And wait for URL ${CITRUS_TESTCONTAINERS_LOCALSTACK_SERVICE_URL}
 
   Scenario: Verify Kinesis events
     # Create AWS-S3 client

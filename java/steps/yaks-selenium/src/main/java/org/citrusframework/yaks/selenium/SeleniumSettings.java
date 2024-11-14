@@ -23,8 +23,8 @@ import org.openqa.selenium.remote.Browser;
  */
 public class SeleniumSettings {
 
-    private static final String SELENIUM_PROPERTY_PREFIX = "yaks.selenium.";
-    private static final String SELENIUM_ENV_PREFIX = "YAKS_SELENIUM_";
+    private static final String SELENIUM_PROPERTY_PREFIX = "citrus.selenium.";
+    private static final String SELENIUM_ENV_PREFIX = "CITRUS_SELENIUM_";
 
     private static final String BROWSER_NAME_PROPERTY = SELENIUM_PROPERTY_PREFIX + "browser.name";
     private static final String BROWSER_NAME_ENV = SELENIUM_ENV_PREFIX + "BROWSER_NAME";

@@ -27,7 +27,7 @@ public class Run extends org.citrusframework.jbang.commands.Run {
 
     @Override
     public Integer call() throws Exception {
-        System.setProperty("yaks.cluster.type", "LOCAL");
+        System.setProperty("citrus.cluster.type", "LOCAL");
         System.setProperty("citrus.spring.java.config", "org.citrusframework.yaks.config.YaksAutoConfiguration");
 
         return super.call();

@@ -24,7 +24,7 @@ config:
         - name: SE_VNC_NO_PASSWORD
           value: 1
     env:
-      - name: YAKS_SELENIUM_BROWSER_TYPE
+      - name: CITRUS_SELENIUM_BROWSER_TYPE
         value: chrome
     resources:
       - index.html

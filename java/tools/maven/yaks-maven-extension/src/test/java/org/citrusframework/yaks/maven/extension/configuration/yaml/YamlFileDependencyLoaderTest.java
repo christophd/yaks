@@ -40,7 +40,7 @@ public class YamlFileDependencyLoaderTest {
 
     @Test
     public void shouldLoadFromYaml() throws LifecycleExecutionException, URISyntaxException {
-        List<Dependency> dependencyList = loader.load(TestHelper.getClasspathResource("yaks.settings.yaml"), properties, logger);
+        List<Dependency> dependencyList = loader.load(TestHelper.getClasspathResource("citrus.settings.yaml"), properties, logger);
         TestHelper.verifyDependencies(dependencyList);
     }
 

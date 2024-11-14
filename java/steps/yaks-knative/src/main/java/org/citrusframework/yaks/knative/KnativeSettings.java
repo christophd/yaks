@@ -16,10 +16,7 @@
 
 package org.citrusframework.yaks.knative;
 
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.citrusframework.yaks.YaksSettings;
 import org.citrusframework.yaks.kubernetes.KubernetesSettings;
@@ -30,8 +27,8 @@ import org.springframework.util.StringUtils;
  */
 public class KnativeSettings {
 
-    private static final String KNATIVE_PROPERTY_PREFIX = "yaks.knative.";
-    private static final String KNATIVE_ENV_PREFIX = "YAKS_KNATIVE_";
+    private static final String KNATIVE_PROPERTY_PREFIX = "citrus.knative.";
+    private static final String KNATIVE_ENV_PREFIX = "CITRUS_KNATIVE_";
 
     private static final String EVENT_PRODUCER_TIMEOUT_PROPERTY = KNATIVE_PROPERTY_PREFIX + "event.producer.timeout";
     private static final String EVENT_PRODUCER_TIMEOUT_ENV = KNATIVE_ENV_PREFIX + "EVENT_PRODUCER_TIMEOUT";
@@ -72,17 +69,7 @@ public class KnativeSettings {
 
     private static final String AUTO_REMOVE_RESOURCES_PROPERTY = KNATIVE_PROPERTY_PREFIX + "auto.remove.resources";
     private static final String AUTO_REMOVE_RESOURCES_ENV = KNATIVE_ENV_PREFIX + "AUTO_REMOVE_RESOURCES";
-    private static final String AUTO_REMOVE_RESOURCES_DEFAULT = "true";
-
-    private static final String VERIFY_BROKER_RESPONSE_PROPERTY = KNATIVE_PROPERTY_PREFIX + "verify.broker.resources";
-    private static final String VERIFY_BROKER_RESPONSE_ENV = KNATIVE_ENV_PREFIX + "VERIFY_BROKER_RESPONSE";
-    private static final String VERIFY_BROKER_RESPONSE_DEFAULT = "true";
-
-    private static final String BROKER_RESPONSE_STATUS_PROPERTY = KNATIVE_PROPERTY_PREFIX + "broker.response";
-    private static final String BROKER_RESPONSE_STATUS_ENV = KNATIVE_ENV_PREFIX + "BROKER_RESPONSE_STATUS";
-
-    private static final String DEFAULT_LABELS_PROPERTY = KNATIVE_PROPERTY_PREFIX + "default.labels";
-    private static final String DEFAULT_LABELS_ENV = KNATIVE_ENV_PREFIX + "DEFAULT_LABELS";
+    private static final String AUTO_REMOVE_RESOURCES_DEFAULT = "false";
 
     private KnativeSettings() {
         // prevent instantiation of utility class
@@ -196,24 +183,6 @@ public class KnativeSettings {
     }
 
     /**
-     * Read labels for K8s resources created by the test. The environment setting should be a
-     * comma delimited list of key-value pairs.
-     * @return
-     */
-    public static Map<String, String> getDefaultLabels() {
-        String labelsConfig = System.getProperty(DEFAULT_LABELS_PROPERTY, System.getenv(DEFAULT_LABELS_ENV));
-
-        if (labelsConfig == null) {
-            return KubernetesSettings.getDefaultLabels();
-        }
-
-        return Stream.of(StringUtils.commaDelimitedListToStringArray(labelsConfig))
-                    .map(item -> StringUtils.delimitedListToStringArray(item, "="))
-                    .filter(keyValue -> keyValue.length == 2)
-                    .collect(Collectors.toMap(item -> item[0], item -> item[1]));
-    }
-
-    /**
      * When set to true Knative resources (triggers, subscriptions, brokers, etc.) created during the test are
      * automatically removed after the test.
      * @return
@@ -221,23 +190,6 @@ public class KnativeSettings {
     public static boolean isAutoRemoveResources() {
         return Boolean.parseBoolean(System.getProperty(AUTO_REMOVE_RESOURCES_PROPERTY,
                 System.getenv(AUTO_REMOVE_RESOURCES_ENV) != null ? System.getenv(AUTO_REMOVE_RESOURCES_ENV) : AUTO_REMOVE_RESOURCES_DEFAULT));
-    }
-
-    public static boolean isVerifyBrokerResponse() {
-        return Boolean.parseBoolean(System.getProperty(VERIFY_BROKER_RESPONSE_PROPERTY,
-                System.getenv(VERIFY_BROKER_RESPONSE_ENV) != null ? System.getenv(VERIFY_BROKER_RESPONSE_ENV) : VERIFY_BROKER_RESPONSE_DEFAULT));
-    }
-
-    public static int getBrokerResponseStatus() {
-        String defaultResponseStatus;
-        if (YaksSettings.isLocal()) {
-            defaultResponseStatus = "204"; // NO_CONTENT
-        } else {
-            defaultResponseStatus = "202"; // ACCEPTED
-        }
-
-        return Integer.parseInt(System.getProperty(BROKER_RESPONSE_STATUS_PROPERTY,
-                System.getenv(BROKER_RESPONSE_STATUS_ENV) != null ? System.getenv(BROKER_RESPONSE_STATUS_ENV) : defaultResponseStatus));
     }
 
     public static String getKnativeMessagingGroup() {

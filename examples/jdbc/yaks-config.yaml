@@ -19,7 +19,7 @@ config:
     testcontainers:
       enabled: true
     env:
-      - name: YAKS_TESTCONTAINERS_AUTO_REMOVE_RESOURCES
+      - name: CITRUS_TESTCONTAINERS_AUTO_REMOVE_RESOURCES
         value: false
       - name: CITRUS_DEFAULT_MESSAGE_TYPE
         value: PLAINTEXT

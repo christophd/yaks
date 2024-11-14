@@ -18,7 +18,7 @@ version with a environment variable set on the YAKS configuration.
 .Overwrite Knative API version
 [source,bash]
 ----
-YAKS_KNATIVE_API_VERSION=v1
+CITRUS_KNATIVE_API_VERSION=v1
 ----
 
 This sets the Knative API version for all operations.

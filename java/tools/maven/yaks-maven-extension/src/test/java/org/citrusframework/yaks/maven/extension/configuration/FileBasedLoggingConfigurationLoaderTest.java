@@ -39,21 +39,21 @@ public class FileBasedLoggingConfigurationLoaderTest {
 
     @Test
     public void shouldLoadFromPropertyFile() throws LifecycleExecutionException {
-        System.setProperty(ExtensionSettings.SETTINGS_FILE_KEY, "classpath:yaks.properties");
+        System.setProperty(ExtensionSettings.SETTINGS_FILE_KEY, "classpath:citrus.properties");
         builder = LoggingConfigurationLoader.newConfigurationBuilder();
         Optional<Level> rootLevel = loader.load(builder, logger);
         Assert.assertTrue(rootLevel.isPresent());
         Assert.assertEquals(Level.INFO, rootLevel.get());
         TestHelper.verifyLoggingConfiguration(builder);
 
-        System.setProperty(ExtensionSettings.SETTINGS_FILE_KEY, "classpath:yaks.settings.yaml");
+        System.setProperty(ExtensionSettings.SETTINGS_FILE_KEY, "classpath:citrus.settings.yaml");
         builder = LoggingConfigurationLoader.newConfigurationBuilder();
         rootLevel = loader.load(builder, logger);
         Assert.assertTrue(rootLevel.isPresent());
         Assert.assertEquals(Level.INFO, rootLevel.get());
         TestHelper.verifyLoggingConfiguration(builder);
 
-        System.setProperty(ExtensionSettings.SETTINGS_FILE_KEY, "classpath:yaks.settings.json");
+        System.setProperty(ExtensionSettings.SETTINGS_FILE_KEY, "classpath:citrus.settings.json");
         builder = LoggingConfigurationLoader.newConfigurationBuilder();
         rootLevel = loader.load(builder, logger);
         Assert.assertTrue(rootLevel.isPresent());

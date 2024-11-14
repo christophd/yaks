@@ -38,7 +38,7 @@ public class JsonFilePluginRepositoryLoaderTest {
 
     @Test
     public void shouldLoadFromJson() throws LifecycleExecutionException, URISyntaxException {
-        List<Repository> repositoryList = loader.load(TestHelper.getClasspathResource("yaks.settings.json"), logger, true);
+        List<Repository> repositoryList = loader.load(TestHelper.getClasspathResource("citrus.settings.json"), logger, true);
         TestHelper.verifyRepositories(repositoryList);
     }
 

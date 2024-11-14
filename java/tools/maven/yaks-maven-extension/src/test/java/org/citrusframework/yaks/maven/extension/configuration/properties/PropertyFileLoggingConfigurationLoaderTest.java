@@ -43,7 +43,7 @@ public class PropertyFileLoggingConfigurationLoaderTest {
 
     @Test
     public void shouldLoadFromPropertyFile() throws LifecycleExecutionException, URISyntaxException {
-        Optional<Level> rootLevel = loader.load(TestHelper.getClasspathResource("yaks.properties"), builder, logger);
+        Optional<Level> rootLevel = loader.load(TestHelper.getClasspathResource("citrus.properties"), builder, logger);
         Assert.assertTrue(rootLevel.isPresent());
         Assert.assertEquals(Level.INFO, rootLevel.get());
 

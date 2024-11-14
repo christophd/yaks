@@ -25,12 +25,12 @@ spec:
       apiVersion: camel.apache.org/v1alpha1
       name: kafka-source
     properties:
-      bootstrapServers: ${bootstrap.server.host}.${YAKS_NAMESPACE}:${bootstrap.server.port}
+      bootstrapServers: ${bootstrap.server.host}.${CITRUS_NAMESPACE}:${bootstrap.server.port}
       user: test
       password: test
       topic: ${topic}
       securityProtocol: PLAINTEXT
       deserializeHeaders: true
   sink:
-    uri: http://kafka-to-http-service.${YAKS_NAMESPACE}/result
+    uri: http://kafka-to-http-service.${CITRUS_NAMESPACE}/result
 

@@ -16,27 +16,22 @@
 
 package org.citrusframework.yaks.testcontainers;
 
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.cucumber.datatable.DataTable;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
+import io.cucumber.java.en.Given;
 import org.citrusframework.Citrus;
 import org.citrusframework.TestCaseRunner;
 import org.citrusframework.annotations.CitrusFramework;
 import org.citrusframework.annotations.CitrusResource;
 import org.citrusframework.context.TestContext;
-import io.cucumber.datatable.DataTable;
-import io.cucumber.java.Before;
-import io.cucumber.java.Scenario;
-import io.cucumber.java.en.Given;
-import org.citrusframework.yaks.YaksSettings;
-import org.testcontainers.containers.Network;
-import org.testcontainers.containers.wait.strategy.Wait;
+import org.citrusframework.testcontainers.redpanda.RedpandaSettings;
 import org.testcontainers.redpanda.RedpandaContainer;
-import org.testcontainers.utility.DockerImageName;
 
-import static org.citrusframework.container.FinallySequence.Builder.doFinally;
-import static java.time.temporal.ChronoUnit.SECONDS;
+import static org.citrusframework.testcontainers.actions.TestcontainersActionBuilder.testcontainers;
 
 public class RedpandaSteps {
 
@@ -51,9 +46,7 @@ public class RedpandaSteps {
 
     public static final int REDPANDA_PORT = 9092;
 
-    private String redpandaVersion = RedpandaSettings.getVersion();
-
-    private RedpandaContainer redpandaContainer;
+    private String redpandaVersion = RedpandaSettings.getRedpandaVersion();
 
     private int startupTimeout = RedpandaSettings.getStartupTimeout();
 
@@ -63,9 +56,9 @@ public class RedpandaSteps {
 
     @Before
     public void before(Scenario scenario) {
-        if (redpandaContainer == null && citrus.getCitrusContext().getReferenceResolver().isResolvable(RedpandaContainer.class)) {
-            redpandaContainer = citrus.getCitrusContext().getReferenceResolver().resolve("redpandaContainer", RedpandaContainer.class);
-            setConnectionSettings(redpandaContainer, context);
+        if (citrus.getCitrusContext().getReferenceResolver().isResolvable(RedpandaSettings.getContainerName(), RedpandaContainer.class)) {
+            RedpandaContainer redpandaContainer = citrus.getCitrusContext().getReferenceResolver().resolve(RedpandaSettings.getContainerName(), RedpandaContainer.class);
+            RedpandaSettings.exposeConnectionSettings(redpandaContainer, serviceName, context);
         }
     }
 
@@ -91,79 +84,22 @@ public class RedpandaSteps {
 
     @Given("^start Redpanda container$")
     public void startRedpanda() {
-        redpandaContainer = new RedpandaContainer(DockerImageName.parse(RedpandaSettings.getImageName()).withTag(redpandaVersion))
-                .withLabel("app", "yaks")
-                .withLabel("com.joyrex2001.kubedock.name-prefix", serviceName)
-                .withLabel("app.kubernetes.io/name", "redpanda")
-                .withLabel("app.kubernetes.io/part-of", TestContainersSettings.getTestName())
-                .withLabel("app.openshift.io/connects-to", TestContainersSettings.getTestId())
-                .withNetwork(Network.newNetwork())
-                .withNetworkAliases(serviceName)
+        runner.run(testcontainers()
+                .redpanda()
+                .start()
+                .version(redpandaVersion)
+                .serviceName(serviceName)
+                .withStartupTimeout(startupTimeout)
                 .withEnv(env)
-                .waitingFor(Wait.forLogMessage(".*Successfully started Redpanda!.*", 1)
-                        .withStartupTimeout(Duration.of(startupTimeout, SECONDS)))
-                // TODO: Remove once Redpanda container works with Podman
-                . withCreateContainerCmdModifier(cmd -> {
-                    cmd.withEntrypoint();
-                    cmd.withEntrypoint("/entrypoint-tc.sh");
-                    cmd.withUser("root:root");
-                })
-                .withCommand("redpanda", "start", "--mode=dev-container", "--smp=1", "--memory=1G");
-
-        redpandaContainer.start();
-
-        citrus.getCitrusContext().bind("redpandaContainer", redpandaContainer);
-
-        setConnectionSettings(redpandaContainer, context);
-
-        if (TestContainersSteps.autoRemoveResources) {
-            runner.run(doFinally()
-                    .actions(context -> redpandaContainer.stop()));
-        }
+                .autoRemove(TestContainersSteps.autoRemoveResources));
     }
 
     @Given("^stop Redpanda container$")
     public void stopRedpanda() {
-        if (redpandaContainer != null) {
-            redpandaContainer.stop();
-        }
+        runner.run(testcontainers()
+                .stop()
+                .containerName(RedpandaSettings.getContainerName()));
 
         env = new HashMap<>();
-    }
-
-    /**
-     * Sets the connection settings in current test context in the form of test variables.
-     * @param redpandaContainer
-     * @param context
-     */
-    private void setConnectionSettings(RedpandaContainer redpandaContainer, TestContext context) {
-        if (!redpandaContainer.isRunning()) {
-            return;
-        }
-
-        String containerId = redpandaContainer.getContainerId().substring(0, 12);
-        String containerName = redpandaContainer.getContainerName();
-
-        if (containerName.startsWith("/")) {
-            containerName = containerName.substring(1);
-        }
-
-        context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "REDPANDA_HOST", redpandaContainer.getHost());
-        context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "REDPANDA_CONTAINER_IP", redpandaContainer.getHost());
-        context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "REDPANDA_CONTAINER_ID", containerId);
-        context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "REDPANDA_CONTAINER_NAME", containerName);
-        context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "REDPANDA_SERVICE_PORT", String.valueOf(redpandaContainer.getMappedPort(REDPANDA_PORT)));
-        context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "REDPANDA_PORT", String.valueOf(redpandaContainer.getMappedPort(REDPANDA_PORT)));
-        context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "REDPANDA_LOCAL_BOOTSTRAP_SERVERS", redpandaContainer.getBootstrapServers());
-
-        if (YaksSettings.isLocal() || !TestContainersSettings.isKubedockEnabled()) {
-            context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "REDPANDA_SERVICE_NAME", serviceName);
-            context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "REDPANDA_BOOTSTRAP_SERVERS", redpandaContainer.getBootstrapServers());
-        } else {
-            context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "REDPANDA_SERVICE_NAME", serviceName);
-            context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "REDPANDA_BOOTSTRAP_SERVERS", String.format("%s:%s", serviceName, redpandaContainer.getMappedPort(REDPANDA_PORT)));
-        }
-
-        context.setVariable(TestContainersSteps.TESTCONTAINERS_VARIABLE_PREFIX + "REDPANDA_KUBE_DOCK_HOST", serviceName);
     }
 }

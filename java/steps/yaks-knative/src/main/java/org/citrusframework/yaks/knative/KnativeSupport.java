@@ -37,26 +37,4 @@ public final class KnativeSupport {
             return new DefaultKnativeClient();
         }
     }
-
-    public static CustomResourceDefinitionContext knativeCRDContext(String knativeComponent, String kind, String version) {
-        return new CustomResourceDefinitionContext.Builder()
-                .withName(String.format("%s.%s.knative.dev", kind, knativeComponent))
-                .withGroup(String.format("%s.knative.dev", knativeComponent))
-                .withVersion(version)
-                .withPlural(kind)
-                .withScope("Namespaced")
-                .build();
-    }
-
-    public static String knativeApiVersion() {
-        return KnativeSettings.getApiVersion();
-    }
-
-    public static String knativeMessagingGroup() {
-        return KnativeSettings.getKnativeMessagingGroup();
-    }
-
-    public static String knativeEventingGroup() {
-        return KnativeSettings.getKnativeEventingGroup();
-    }
 }

@@ -16,20 +16,15 @@
 
 package org.citrusframework.yaks.kubernetes;
 
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.citrusframework.yaks.YaksSettings;
-import org.springframework.util.StringUtils;
 
 /**
  * @author Christoph Deppisch
  */
 public class KubernetesSettings {
 
-    private static final String KUBERNETES_PROPERTY_PREFIX = "yaks.kubernetes.";
-    private static final String KUBERNETES_ENV_PREFIX = "YAKS_KUBERNETES_";
+    private static final String KUBERNETES_PROPERTY_PREFIX = "citrus.kubernetes.";
+    private static final String KUBERNETES_ENV_PREFIX = "CITRUS_KUBERNETES_";
 
     private static final String SERVICE_TIMEOUT_PROPERTY = KUBERNETES_PROPERTY_PREFIX + "service.timeout";
     private static final String SERVICE_TIMEOUT_ENV = KUBERNETES_ENV_PREFIX + "SERVICE_TIMEOUT";
@@ -52,11 +47,7 @@ public class KubernetesSettings {
 
     private static final String AUTO_REMOVE_RESOURCES_PROPERTY = KUBERNETES_PROPERTY_PREFIX + "auto.remove.resources";
     private static final String AUTO_REMOVE_RESOURCES_ENV = KUBERNETES_ENV_PREFIX + "AUTO_REMOVE_RESOURCES";
-    private static final String AUTO_REMOVE_RESOURCES_DEFAULT = "true";
-
-    private static final String DEFAULT_LABELS_PROPERTY = KUBERNETES_PROPERTY_PREFIX + "default.labels";
-    private static final String DEFAULT_LABELS_ENV = KUBERNETES_ENV_PREFIX + "DEFAULT_LABELS";
-    private static final String DEFAULT_LABELS_DEFAULT = "app=yaks";
+    private static final String AUTO_REMOVE_RESOURCES_DEFAULT = "false";
 
     private static final String MAX_ATTEMPTS_PROPERTY = KUBERNETES_PROPERTY_PREFIX + "max.attempts";
     private static final String MAX_ATTEMPTS_ENV = KUBERNETES_ENV_PREFIX + "MAX_ATTEMPTS";
@@ -121,21 +112,6 @@ public class KubernetesSettings {
     public static String getServicePort() {
         return System.getProperty(SERVICE_PORT_PROPERTY,
                 System.getenv(SERVICE_PORT_ENV) != null ? System.getenv(SERVICE_PORT_ENV) : SERVICE_PORT_DEFAULT);
-    }
-
-    /**
-     * Read labels for Kubernetes resources created by the test. The environment setting should be a
-     * comma delimited list of key-value pairs.
-     * @return
-     */
-    public static Map<String, String> getDefaultLabels() {
-        String labelsConfig = System.getProperty(DEFAULT_LABELS_PROPERTY,
-                System.getenv(DEFAULT_LABELS_ENV) != null ? System.getenv(DEFAULT_LABELS_ENV) : DEFAULT_LABELS_DEFAULT);
-
-        return Stream.of(StringUtils.commaDelimitedListToStringArray(labelsConfig))
-                    .map(item -> StringUtils.delimitedListToStringArray(item, "="))
-                    .filter(keyValue -> keyValue.length == 2)
-                    .collect(Collectors.toMap(item -> item[0], item -> item[1]));
     }
 
     /**

@@ -18,19 +18,20 @@ package org.citrusframework.yaks.kubernetes;
 
 import java.util.Collections;
 
-import org.citrusframework.Citrus;
-import org.citrusframework.TestCaseRunner;
-import org.citrusframework.actions.AbstractTestAction;
-import org.citrusframework.annotations.CitrusFramework;
-import org.citrusframework.annotations.CitrusResource;
-import org.citrusframework.context.TestContext;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import org.assertj.core.api.Assertions;
-import org.citrusframework.yaks.kubernetes.actions.KubernetesAction;
+import org.citrusframework.Citrus;
+import org.citrusframework.TestCaseRunner;
+import org.citrusframework.actions.AbstractTestAction;
+import org.citrusframework.annotations.CitrusFramework;
+import org.citrusframework.annotations.CitrusResource;
+import org.citrusframework.context.TestContext;
+import org.citrusframework.kubernetes.KubernetesSettings;
+import org.citrusframework.kubernetes.actions.KubernetesAction;
 
 /**
  * @author Christoph Deppisch
@@ -149,6 +150,16 @@ public class KubernetesTestSteps {
         @Override
         public KubernetesClient getKubernetesClient() {
             return KubernetesSupport.getKubernetesClient(citrus);
+        }
+
+        @Override
+        public String getNamespace() {
+            return null;
+        }
+
+        @Override
+        public boolean isAutoRemoveResources() {
+            return KubernetesSettings.isAutoRemoveResources();
         }
     }
 }

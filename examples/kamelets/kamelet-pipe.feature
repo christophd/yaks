@@ -9,7 +9,7 @@ Feature: Kamelet pipe
     Given create Kubernetes service greeting-service with target port 8080
     And Pipe source properties
       | message  | Hello World |
-    And bind Kamelet hello-source to uri http://greeting-service.${YAKS_NAMESPACE}/greeting
+    And bind Kamelet hello-source to uri http://greeting-service.${CITRUS_NAMESPACE}/greeting
     When create Pipe hello-source-uri
     Then Pipe hello-source-uri should be available
 

@@ -21,8 +21,8 @@ package org.citrusframework.yaks.http;
  */
 public class HttpSettings {
 
-    private static final String HTTP_PROPERTY_PREFIX = "yaks.http.";
-    private static final String HTTP_ENV_PREFIX = "YAKS_HTTP_";
+    private static final String HTTP_PROPERTY_PREFIX = "citrus.http.";
+    private static final String HTTP_ENV_PREFIX = "CITRUS_HTTP_";
 
     private static final String TIMEOUT_PROPERTY = HTTP_PROPERTY_PREFIX + "timeout";
     private static final String TIMEOUT_ENV = HTTP_ENV_PREFIX + "TIMEOUT";

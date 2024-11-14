@@ -19,8 +19,6 @@ package org.citrusframework.yaks.knative;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Objects;
-import java.util.UUID;
 import javax.net.ssl.SSLContext;
 
 import io.cucumber.datatable.DataTable;
@@ -40,17 +38,12 @@ import org.citrusframework.TestCaseRunner;
 import org.citrusframework.annotations.CitrusFramework;
 import org.citrusframework.annotations.CitrusResource;
 import org.citrusframework.exceptions.CitrusRuntimeException;
-import org.citrusframework.http.actions.HttpClientRequestActionBuilder;
 import org.citrusframework.http.client.HttpClient;
 import org.citrusframework.http.client.HttpClientBuilder;
-import org.citrusframework.yaks.knative.ce.CloudEventMessage;
-import org.citrusframework.yaks.knative.ce.CloudEventSupport;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.citrusframework.knative.ce.CloudEventSupport;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.util.StringUtils;
 
-import static org.citrusframework.http.actions.HttpActionBuilder.http;
+import static org.citrusframework.knative.actions.KnativeActionBuilder.knative;
 
 /**
  * @author Christoph Deppisch
@@ -120,54 +113,24 @@ public class SendEventSteps {
 
     @When("^(?:create|send) Knative event$")
     public void createEvent(DataTable attributes) {
-        sendEvent(CloudEventSupport.createEventMessage(eventData, attributes.asMap(String.class, String.class)));
+        runner.run(knative()
+                .event()
+                .send()
+                .client(httpClient)
+                .brokerUrl(brokerUrl)
+                .eventData(eventData)
+                .attributes(attributes.asMap(String.class, String.class)));
     }
 
     @When("^(?:create|send) Knative event as json$")
     public void createEventJson(String json) {
-        sendEvent(CloudEventSupport.createEventMessage(eventData, CloudEventSupport.attributesFromJson(json)));
-    }
-
-    /**
-     * Sends event request as Http request and verify accepted response.
-     * @param request
-     */
-    private void sendEvent(CloudEventMessage request) {
-        if (Objects.isNull(request.getContentType())) {
-            request.contentType(MediaType.APPLICATION_JSON_VALUE);
-        }
-
-        if (request.getEventId() == null) {
-            request.eventId(UUID.randomUUID().toString());
-        }
-
-        if (request.getEventType() == null) {
-            request.eventType("org.citrusframework.yaks.event.test");
-        }
-
-        if (request.getSource() == null) {
-            request.source("yaks-test");
-        }
-
-        request.setHeader("Host", KnativeSettings.getBrokerHost());
-
-        HttpClientRequestActionBuilder.HttpMessageBuilderSupport requestBuilder = http().client(httpClient)
+        runner.run(knative()
+                .event()
                 .send()
-                .post()
-                .message(request);
-
-        if (StringUtils.hasText(brokerUrl)) {
-            requestBuilder.uri(brokerUrl);
-        }
-
-        runner.run(requestBuilder);
-
-        if (KnativeSettings.isVerifyBrokerResponse()) {
-            runner.run(http().client(httpClient)
-                    .receive()
-                    .response(HttpStatus.valueOf(KnativeSettings.getBrokerResponseStatus()))
-                    .timeout(timeout));
-        }
+                .client(httpClient)
+                .brokerUrl(brokerUrl)
+                .eventData(eventData)
+                .attributes(CloudEventSupport.attributesFromJson(json)));
     }
 
     /**

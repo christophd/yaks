@@ -61,7 +61,7 @@ public class CreatePipeActionTest {
 
     @Test
     public void shouldCreateLocalPipe() {
-        System.setProperty("yaks.jbang.camel.dump.integration.output", "true");
+        System.setProperty("citrus.jbang.camel.dump.integration.output", "true");
 
         CreatePipeAction action = new CreatePipeAction.Builder()
                 .client(kubernetesClient)
@@ -105,7 +105,7 @@ public class CreatePipeActionTest {
                 .resource(Resources.fromClasspath("kafka-source-pipe.yaml"))
                 .build();
 
-        context.setVariable("YAKS_NAMESPACE", "default");
+        context.setVariable("CITRUS_NAMESPACE", "default");
         context.setVariable("bootstrap.server.host", "my-cluster-kafka-bootstrap");
         context.setVariable("bootstrap.server.port", "9092");
         context.setVariable("topic", "my-topic");

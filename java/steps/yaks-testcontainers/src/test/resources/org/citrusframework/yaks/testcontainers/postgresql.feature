@@ -9,14 +9,14 @@ Feature: PostgreSQL
     CREATE TABLE IF NOT EXISTS todo (id SERIAL PRIMARY KEY, task VARCHAR, completed INTEGER);
     """
     Then start PostgreSQL container
-    And log 'Started PostgreSQL container: ${YAKS_TESTCONTAINERS_POSTGRESQL_CONTAINER_NAME}'
+    And log 'Started PostgreSQL container: ${CITRUS_TESTCONTAINERS_POSTGRESQL_CONTAINER_NAME}'
 
   Scenario: Connect and insert
     Given Database connection
-      | driver    | ${YAKS_TESTCONTAINERS_POSTGRESQL_DRIVER} |
-      | url       | ${YAKS_TESTCONTAINERS_POSTGRESQL_LOCAL_URL} |
-      | username  | ${YAKS_TESTCONTAINERS_POSTGRESQL_USERNAME} |
-      | password  | ${YAKS_TESTCONTAINERS_POSTGRESQL_PASSWORD} |
+      | driver    | ${CITRUS_TESTCONTAINERS_POSTGRESQL_DRIVER} |
+      | url       | ${CITRUS_TESTCONTAINERS_POSTGRESQL_LOCAL_URL} |
+      | username  | ${CITRUS_TESTCONTAINERS_POSTGRESQL_USERNAME} |
+      | password  | ${CITRUS_TESTCONTAINERS_POSTGRESQL_PASSWORD} |
     When execute SQL update: INSERT INTO todo VALUES (1, 'Write YAKS test', 0)
     Then SQL query: SELECT * FROM todo WHERE ID=1
     And verify column TASK=Write YAKS test

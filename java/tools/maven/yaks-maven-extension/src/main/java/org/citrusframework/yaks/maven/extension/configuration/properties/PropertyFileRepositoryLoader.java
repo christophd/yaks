@@ -53,10 +53,10 @@ public class PropertyFileRepositoryLoader extends AbstractConfigFileRepositoryLo
 
             for (Enumeration<?> e = props.propertyNames(); e.hasMoreElements(); ) {
                 String name = (String) e.nextElement();
-                if (asPluginRepository && name.startsWith("yaks.pluginRepository.")) {
-                    repositoryList.add(build(name.substring("yaks.pluginRepository.".length()), props.getProperty(name), logger));
-                } else if (!asPluginRepository && name.startsWith("yaks.repository.")) {
-                    repositoryList.add(build(name.substring("yaks.repository.".length()), props.getProperty(name), logger));
+                if (asPluginRepository && name.startsWith("citrus.pluginRepository.")) {
+                    repositoryList.add(build(name.substring("citrus.pluginRepository.".length()), props.getProperty(name), logger));
+                } else if (!asPluginRepository && name.startsWith("citrus.repository.")) {
+                    repositoryList.add(build(name.substring("citrus.repository.".length()), props.getProperty(name), logger));
                 }
             }
         } catch (IOException e) {

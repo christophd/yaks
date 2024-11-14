@@ -16,11 +16,8 @@
 
 package org.citrusframework.yaks.kubernetes;
 
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
@@ -30,14 +27,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.fabric8.kubernetes.api.model.ContainerStatus;
-import io.fabric8.kubernetes.api.model.GenericKubernetesResource;
-import io.fabric8.kubernetes.api.model.GenericKubernetesResourceList;
 import io.fabric8.kubernetes.api.model.Pod;
-import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientBuilder;
-import io.fabric8.kubernetes.client.KubernetesClientException;
-import io.fabric8.kubernetes.client.dsl.Updatable;
 import io.fabric8.kubernetes.client.dsl.base.ResourceDefinitionContext;
 import org.citrusframework.Citrus;
 import org.citrusframework.context.TestContext;
@@ -148,44 +140,6 @@ public final class KubernetesSupport {
         return OBJECT_MAPPER;
     }
 
-    public static GenericKubernetesResource getResource(KubernetesClient k8sClient, String namespace,
-                                                        ResourceDefinitionContext context, String resourceName) {
-        return k8sClient.genericKubernetesResources(context).inNamespace(namespace)
-                .withName(resourceName)
-                .get();
-    }
-
-    public static GenericKubernetesResourceList getResources(KubernetesClient k8sClient, String namespace,
-                                                             ResourceDefinitionContext context) {
-        return k8sClient.genericKubernetesResources(context)
-                .inNamespace(namespace)
-                .list();
-    }
-
-    public static GenericKubernetesResourceList getResources(KubernetesClient k8sClient, String namespace,
-                                                             ResourceDefinitionContext context, String labelKey, String labelValue) {
-        return k8sClient.genericKubernetesResources(context)
-                .inNamespace(namespace)
-                .withLabel(labelKey, labelValue)
-                .list();
-    }
-
-    public static <T> void createResource(KubernetesClient k8sClient, String namespace,
-                                   ResourceDefinitionContext context, T resource) {
-        createResource(k8sClient, namespace, context, yaml().dumpAsMap(resource));
-    }
-
-    public static void createResource(KubernetesClient k8sClient, String namespace,
-                                      ResourceDefinitionContext context, String yaml) {
-        k8sClient.genericKubernetesResources(context).inNamespace(namespace)
-                .load(new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8))).createOr(Updatable::update);
-    }
-
-    public static void deleteResource(KubernetesClient k8sClient, String namespace,
-                                      ResourceDefinitionContext context, String resourceName) {
-        k8sClient.genericKubernetesResources(context).inNamespace(namespace).withName(resourceName).delete();
-    }
-
     public static ResourceDefinitionContext crdContext(String resourceType, String group, String kind, String version) {
         return new ResourceDefinitionContext.Builder()
                 .withGroup(group)
@@ -211,27 +165,5 @@ public final class KubernetesSupport {
 
         return !status.equals("Running") ||
                 pod.getStatus().getContainerStatuses().stream().allMatch(ContainerStatus::getReady);
-    }
-
-    /**
-     * Try to get the cluster IP address of given service.
-     * Resolves service by its name in given namespace and retrieves the cluster IP setting from the service spec.
-     * Returns empty Optional in case of errors or no cluster IP setting.
-     * @param citrus
-     * @param serviceName
-     * @param namespace
-     * @return
-     */
-    public static Optional<String> getServiceClusterIp(Citrus citrus, String serviceName, String namespace) {
-        try {
-            Service service = getKubernetesClient(citrus).services().inNamespace(namespace).withName(serviceName).get();
-            if (service != null) {
-                return Optional.ofNullable(service.getSpec().getClusterIP());
-            }
-        } catch (KubernetesClientException e) {
-            return Optional.empty();
-        }
-
-        return Optional.empty();
     }
 }

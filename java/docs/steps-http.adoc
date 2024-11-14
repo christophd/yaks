@@ -278,7 +278,7 @@ Given HTTP header name ignore case is enabled
 
 This will enable the mode where header name verification is case-insensitive.
 
-You may also use a environment setting `YAKS_HTTP_HEADER_NAME_IGNORE_CASE=true/false` in `yaks-config` to enable/disable the setting for the whole test suite. By default, the setting is disabled so header names are verified with case-sensitive mode.
+You may also use a environment setting `CITRUS_HTTP_HEADER_NAME_IGNORE_CASE=true/false` in `yaks-config` to enable/disable the setting for the whole test suite. By default, the setting is disabled so header names are verified with case-sensitive mode.
 
 ==== Response body
 
@@ -855,8 +855,8 @@ The keystore settings are also accessible via environment variables.
 .SSL keystore environment variables
 [source,properties]
 ----
-YAKS_HTTP_SECURE_KEYSTORE_PATH={file}
-YAKS_HTTP_SECURE_KEYSTORE_PASSWIRD={password}
+CITRUS_HTTP_SECURE_KEYSTORE_PATH={file}
+CITRUS_HTTP_SECURE_KEYSTORE_PASSWIRD={password}
 ----
 
 The Http server components also provide a convenient way to add server properties when creating

@@ -53,7 +53,7 @@ public class PropertyFileDependencyLoader extends AbstractConfigFileDependencyLo
 
             for (Enumeration<?> e = props.propertyNames(); e.hasMoreElements(); ) {
                 String name = (String) e.nextElement();
-                if (name.startsWith("yaks.dependency.")) {
+                if (name.startsWith("citrus.dependency.")) {
                     dependencyList.add(build(props.getProperty(name), properties, logger));
                 }
             }

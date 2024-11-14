@@ -43,7 +43,7 @@ public class YamlFileLoggingConfigurationLoaderTest {
 
     @Test
     public void shouldLoadFromYaml() throws LifecycleExecutionException, URISyntaxException {
-        Optional<Level> rootLevel = loader.load(TestHelper.getClasspathResource("yaks.settings.yaml"), builder, logger);
+        Optional<Level> rootLevel = loader.load(TestHelper.getClasspathResource("citrus.settings.yaml"), builder, logger);
         Assert.assertTrue(rootLevel.isPresent());
         Assert.assertEquals(Level.INFO, rootLevel.get());
 
