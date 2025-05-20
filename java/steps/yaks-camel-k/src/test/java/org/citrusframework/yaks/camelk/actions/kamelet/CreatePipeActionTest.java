@@ -24,7 +24,7 @@ import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesCrudDispatcher;
 import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
 import io.fabric8.mockwebserver.Context;
-import okhttp3.mockwebserver.MockWebServer;
+import io.fabric8.mockwebserver.MockWebServer;
 import org.apache.camel.v1.Pipe;
 import org.citrusframework.context.TestContext;
 import org.citrusframework.context.TestContextFactory;

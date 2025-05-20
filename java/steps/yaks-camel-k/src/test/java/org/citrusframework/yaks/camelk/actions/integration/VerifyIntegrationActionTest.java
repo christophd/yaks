@@ -20,14 +20,14 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 
-import org.citrusframework.context.TestContext;
-import org.citrusframework.context.TestContextFactory;
-import org.citrusframework.exceptions.ActionTimeoutException;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesCrudDispatcher;
 import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
 import io.fabric8.mockwebserver.Context;
-import okhttp3.mockwebserver.MockWebServer;
+import io.fabric8.mockwebserver.MockWebServer;
+import org.citrusframework.context.TestContext;
+import org.citrusframework.context.TestContextFactory;
+import org.citrusframework.exceptions.ActionTimeoutException;
 import org.citrusframework.yaks.YaksClusterType;
 import org.citrusframework.yaks.camelk.jbang.ProcessAndOutput;
 import org.junit.Assert;

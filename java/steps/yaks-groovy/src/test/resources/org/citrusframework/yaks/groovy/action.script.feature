@@ -46,7 +46,7 @@ Feature: Run script actions
 
   Scenario: Run actions
     Given $(doFinally().actions(echo('${greeting} in finally!')))
-    When $(createVariable('greeting', 'Hello from YAKS!'))
+    When $(createVariables().variable('greeting', 'Hello from YAKS!'))
     Then $(echo('${greeting}'))
     And print '${greeting}'
     And variable greeting is "Ciao"

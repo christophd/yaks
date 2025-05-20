@@ -90,35 +90,35 @@
     <maven.compiler.target>17</maven.compiler.target>
     <project.docs.version>${project.version}</project.docs.version>
 
-    <apache.camel.version>4.7.0</apache.camel.version>
-    <activemq.artemis.version>2.37.0</activemq.artemis.version>
-    <activemq.version>6.1.0</activemq.version>
+    <activemq.artemis.version>2.41.0</activemq.artemis.version>
+    <activemq.version>6.1.6</activemq.version>
+    <apache.camel.version>4.11.0</apache.camel.version>
     <apicurio.version>1.1.27</apicurio.version>
     <ascii-table-version>1.8.0</ascii-table-version>
-    <assertj-core.version>3.25.3</assertj-core.version>
-    <awaitility.version>4.2.1</awaitility.version>
-    <aws-java-sdk2.version>2.25.53</aws-java-sdk2.version>
+    <assertj-core.version>3.27.3</assertj-core.version>
+    <awaitility.version>4.3.0</awaitility.version>
+    <aws-java-sdk2.version>2.31.36</aws-java-sdk2.version>
     <camel.k.crds.version>2.3.3</camel.k.crds.version>
-    <citrus.version>4.4.0</citrus.version>
-    <commons.dbcp2.version>2.12.0</commons.dbcp2.version>
-    <cucumber.version>7.18.1</cucumber.version>
-    <groovy.version>3.0.22</groovy.version>
-    <jackson.version>2.17.2</jackson.version>
+    <citrus.version>4.6.0</citrus.version>
+    <commons.dbcp2.version>2.13.0</commons.dbcp2.version>
+    <cucumber.version>7.22.1</cucumber.version>
+    <groovy.version>3.0.24</groovy.version>
+    <jackson.version>2.18.3</jackson.version>
     <junit.version>4.13.2</junit.version>
-    <knative-client.version>6.13.3</knative-client.version>
-    <kubernetes-client.version>6.13.3</kubernetes-client.version>
-    <log4j2.version>2.22.1</log4j2.version>
-    <mockito.version>5.13.0</mockito.version>
-    <netty.version>4.1.105.Final</netty.version>
+    <knative-client.version>7.2.0</knative-client.version>
+    <kubernetes-client.version>7.2.0</kubernetes-client.version>
+    <log4j2.version>2.23.1</log4j2.version>
+    <mockito.version>5.17.0</mockito.version>
+    <netty.version>4.2.0.Final</netty.version>
     <okhttp.version>4.12.0</okhttp.version>
-    <picoli-version>4.7.6</picoli-version>
+    <picoli-version>4.7.7</picoli-version>
     <plexus-component-metadata.version>2.1.1</plexus-component-metadata.version>
-    <postgresql.version>42.7.3</postgresql.version>
-    <slf4j.version>2.0.11</slf4j.version>
-    <snakeyaml.version>2.3</snakeyaml.version>
-    <spring.version>6.1.13</spring.version>
-    <testcontainers.version>1.20.1</testcontainers.version>
-    <xstream.version>1.4.20</xstream.version>
+    <postgresql.version>42.7.5</postgresql.version>
+    <slf4j.version>2.0.17</slf4j.version>
+    <snakeyaml.version>2.4</snakeyaml.version>
+    <spring.version>6.2.6</spring.version>
+    <testcontainers.version>1.21.0</testcontainers.version>
+    <xstream.version>1.4.21</xstream.version>
 
     <asciidoctor-maven-plugin.version>2.2.4</asciidoctor-maven-plugin.version>
     <asciidoctorj-pdf.version>1.5.3</asciidoctorj-pdf.version>
@@ -128,10 +128,10 @@
     <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
     <maven-checkstyle.version>7.6.1</maven-checkstyle.version>
     <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
-    <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
+    <maven-failsafe-plugin.version>3.5.3</maven-failsafe-plugin.version>
     <maven-remote-resources-plugin.version>3.0.0</maven-remote-resources-plugin.version>
     <maven-scm-plugin.version>2.0.1</maven-scm-plugin.version>
-    <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+    <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
     <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
     <versions-maven-plugin.version>2.7</versions-maven-plugin.version>
 
@@ -161,11 +161,6 @@
       <dependency>
         <groupId>com.squareup.okhttp3</groupId>
         <artifactId>okhttp</artifactId>
-        <version>${okhttp.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.squareup.okhttp3</groupId>
-        <artifactId>mockwebserver</artifactId>
         <version>${okhttp.version}</version>
       </dependency>
 
@@ -338,7 +333,7 @@
       <!-- JMS connection factory dependencies in provided scope -->
       <dependency>
         <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-client-jakarta</artifactId>
+        <artifactId>activemq-client</artifactId>
         <version>${activemq.version}</version>
         <scope>provided</scope>
       </dependency>
@@ -666,6 +661,13 @@
           <configuration>
             <failIfNoTests>false</failIfNoTests>
           </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.maven.surefire</groupId>
+              <artifactId>surefire-junit4</artifactId>
+              <version>${maven-surefire-plugin.version}</version>
+            </dependency>
+          </dependencies>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -683,6 +685,13 @@
               </configuration>
             </execution>
           </executions>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.maven.surefire</groupId>
+              <artifactId>surefire-junit4</artifactId>
+              <version>${maven-failsafe-plugin.version}</version>
+            </dependency>
+          </dependencies>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>

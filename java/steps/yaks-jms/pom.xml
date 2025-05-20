@@ -52,7 +52,7 @@
     <!-- JMS connection factory dependencies in provided scope -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-client-jakarta</artifactId>
+      <artifactId>activemq-client</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>

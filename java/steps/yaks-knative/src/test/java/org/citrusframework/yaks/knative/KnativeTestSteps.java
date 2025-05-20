@@ -23,7 +23,7 @@ import io.fabric8.knative.client.KnativeClient;
 import io.fabric8.knative.eventing.v1.Broker;
 import io.fabric8.knative.eventing.v1.BrokerStatus;
 import io.fabric8.knative.eventing.v1.TriggerList;
-import io.fabric8.knative.internal.pkg.apis.Condition;
+import io.fabric8.knative.pkg.apis.Condition;
 import io.fabric8.knative.messaging.v1.SubscriptionList;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import org.assertj.core.api.Assertions;
