@@ -101,11 +101,12 @@ build_artifacts () {
       -Dmaven.repo.local=${working_dir}/build/_maven_repository \
       install
 
-  if [ ! $(hasflag --snapshot-release) ] && [ ! $(hasflag --local-release) ]; then
-      # deploy artifacts to Sonatype OSS staging
-      echo "Deploy YAKS artifacts ..."
-
-      ./mvnw ${maven_opts} clean deploy -Dtest -Dit.test -DfailIfNoTests=false -Prelease-central -DstagingDescription="Staging YAKS for $release_version"
+  if [ $(hasflag --dry-run -n) ]; then
+      echo "==== Release to Maven Central - dry run"
+      ./mvnw ${maven_opts} clean deploy -Dsurefire.failIfNoSpecifiedTests=false -Dfailsafe.failIfNoSpecifiedTests=false -DfailIfNoTests=false -Dtest -Dit.test -Dgpg.autosign=true -Prelease-central
+  elif [ ! $(hasflag --snapshot-release) ] && [ ! $(hasflag --local-release) ]; then
+      echo "==== Release to Maven central"
+      ./mvnw ${maven_opts} clean deploy -Dsurefire.failIfNoSpecifiedTests=false -Dfailsafe.failIfNoSpecifiedTests=false -DfailIfNoTests=false -Dtest -Dit.test -Dgpg.autosign=true -DautoPublish=true -Prelease-central
   fi
 }
 
@@ -121,7 +122,7 @@ extract_maven_opts() {
 
     if [ $(hasflag --skip-tests) ]; then
         # Do not run any tests but compile test sources
-        maven_opts="$maven_opts -Dtest -Dit.test -DfailIfNoTests=false"
+        maven_opts="$maven_opts -Dtest -Dit.test -Dsurefire.failIfNoSpecifiedTests=false -Dfailsafe.failIfNoSpecifiedTests=false -DfailIfNoTests=false"
     fi
 
     echo $maven_opts

@@ -91,10 +91,6 @@ release() {
 
     # For a test run, we are done
     if [ $(hasflag --dry-run -n) ]; then
-        if [ ! $(hasflag --snapshot-release) ] && [ ! $(hasflag --local-release) ] && [ ! $(hasflag --keep-staging-repo) ]; then
-            drop_staging_repo "$working_dir" "$maven_opts"
-        fi
-
         echo "==== Dry run finished, nothing has been committed"
         echo "==== Use 'git reset --hard' to cleanup"
         exit 0
@@ -111,10 +107,6 @@ release() {
     docker tag ${image}-amd64:${release_version} ${image}:${release_version}
 
     if [ ! $(hasflag --snapshot-release) ] && [ ! $(hasflag --local-release) ]; then
-        # Release staging repo
-        # NOTE: not working recently (because of timeouts) - fallback to doing this manually
-        # release_staging_repo "$working_dir" "$maven_opts"
-
         # Push Docker images (if configured)
         if [ ! $(hasflag --no-docker-push) ]; then
             echo "==== Pushing Docker images $image:$release_version"
@@ -253,7 +245,6 @@ source "$location/util/common_funcs"
 source "$location/util/build_funcs"
 source "$location/util/git_funcs"
 source "$location/util/version_funcs"
-source "$location/util/maven_central_funcs"
 source "$location/util/go_funcs"
 source "$location/util/olm_funcs"
 
