@@ -44,7 +44,7 @@ public class MongoDBSteps {
     @CitrusResource
     private TestContext context;
 
-    private String mongoDBVersion = MongoDBSettings.getMongoDBVersion();
+    private String mongoDBVersion = "8.0.13";
     private int startupTimeout = MongoDBSettings.getStartupTimeout();
 
     private Map<String, String> env = new HashMap<>();

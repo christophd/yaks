@@ -44,7 +44,7 @@ public class KafkaSteps {
     @CitrusResource
     private TestContext context;
 
-    private String kafkaVersion = KafkaSettings.getKafkaVersion();
+    private String kafkaVersion = "7.9.2";
 
     private int startupTimeout = KafkaSettings.getStartupTimeout();
 

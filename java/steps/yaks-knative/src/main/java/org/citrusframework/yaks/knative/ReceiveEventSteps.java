@@ -16,6 +16,9 @@
 
 package org.citrusframework.yaks.knative;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
@@ -90,12 +93,17 @@ public class ReceiveEventSteps {
 
     @Then("^(?:receive|verify) Knative event$")
     public void receiveEvent(DataTable attributes) {
-        receiveEvent(CloudEventSupport.createEventMessage(eventData, attributes.asMap(String.class, String.class)));
+        receiveEvent(CloudEventSupport.createEventMessage(eventData, attributes.asMap(String.class, Object.class)));
     }
 
     @Then("^(?:receive|verify) Knative event as json$")
     public void receiveEventJson(String json) {
-        receiveEvent(CloudEventSupport.createEventMessage(eventData, CloudEventSupport.attributesFromJson(json)));
+        Map<String, Object> attributes = CloudEventSupport.attributesFromJson(json)
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        receiveEvent(CloudEventSupport.createEventMessage(eventData, attributes));
     }
 
     @Given("^create Knative event consumer service ([^\\s]+)$")

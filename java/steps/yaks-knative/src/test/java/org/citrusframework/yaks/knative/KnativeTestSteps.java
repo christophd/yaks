@@ -16,6 +16,9 @@
 
 package org.citrusframework.yaks.knative;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -23,8 +26,8 @@ import io.fabric8.knative.client.KnativeClient;
 import io.fabric8.knative.eventing.v1.Broker;
 import io.fabric8.knative.eventing.v1.BrokerStatus;
 import io.fabric8.knative.eventing.v1.TriggerList;
-import io.fabric8.knative.pkg.apis.Condition;
 import io.fabric8.knative.messaging.v1.SubscriptionList;
+import io.fabric8.knative.pkg.apis.Condition;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import org.assertj.core.api.Assertions;
 import org.citrusframework.Citrus;
@@ -36,6 +39,7 @@ import org.citrusframework.context.TestContext;
 import org.citrusframework.http.message.HttpMessage;
 import org.citrusframework.knative.KnativeSettings;
 import org.citrusframework.knative.actions.KnativeAction;
+import org.citrusframework.knative.actions.KnativeActionBuilder;
 import org.citrusframework.knative.ce.CloudEventSupport;
 import org.citrusframework.yaks.kubernetes.KubernetesSupport;
 import org.springframework.http.HttpStatus;
@@ -55,7 +59,12 @@ public class KnativeTestSteps {
 
     @Given("^create test event$")
     public void sendTestEvents(String json) {
-        HttpMessage eventRequest = CloudEventSupport.createEventMessage("", CloudEventSupport.attributesFromJson(json));
+        Map<String, Object> attributes = CloudEventSupport.attributesFromJson(json)
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        HttpMessage eventRequest = CloudEventSupport.createEventMessage("", attributes);
 
         runner.run(http().client("http://localhost:${knativeServicePort}/")
                         .send()
@@ -193,6 +202,13 @@ public class KnativeTestSteps {
         @Override
         public boolean isAutoRemoveResources() {
             return KnativeSettings.isAutoRemoveResources();
+        }
+
+        @Override
+        public KnativeActionBuilder knative() {
+            return new KnativeActionBuilder()
+                    .client(KnativeSupport.getKnativeClient(citrus))
+                    .client(KubernetesSupport.getKubernetesClient(citrus));
         }
     }
 }

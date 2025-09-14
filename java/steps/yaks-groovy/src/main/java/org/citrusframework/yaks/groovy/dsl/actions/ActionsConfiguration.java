@@ -76,7 +76,7 @@ public class ActionsConfiguration {
         }
 
         @Override
-        public <T extends TestAction> T $(TestActionBuilder<T> builder) {
+        public <T extends TestAction> TestActionRunner $(TestActionBuilder<T> builder) {
             throw new CitrusRuntimeException("Nested test action should not use run shortcut '$()' " +
                     "please just use the test action builder method");
         }
@@ -97,19 +97,15 @@ public class ActionsConfiguration {
     public class ActionsBuilder extends GroovyObjectSupport {
 
         /**
-         * Short hand method running given test action builder.
-         * @param builder
-         * @param <T>
-         * @return
+         * Shorthand method running given test action builder.
          */
-        public <T extends TestAction> T $(TestActionBuilder<T> builder) {
+        public <T extends TestAction> TestActionRunner $(TestActionBuilder<T> builder) {
             return runner.run(builder);
         }
 
         /**
          * Workaround method selection errors because Object classes do also use sleep method
          * signatures and Groovy may not know which one of them to invoke.
-         * @return
          */
         public SleepAction.Builder delay() {
             return new SleepAction.Builder();
@@ -118,7 +114,6 @@ public class ActionsConfiguration {
         /**
          * Workaround method selection errors because Object classes do also use wait method
          * signatures and Groovy may not know which one of them to invoke.
-         * @return
          */
         public Wait.Builder waitFor() {
             return new Wait.Builder();

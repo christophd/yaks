@@ -19,6 +19,8 @@ package org.citrusframework.yaks.knative;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
+import java.util.stream.Collectors;
 import javax.net.ssl.SSLContext;
 
 import io.cucumber.datatable.DataTable;
@@ -119,18 +121,23 @@ public class SendEventSteps {
                 .client(httpClient)
                 .brokerUrl(brokerUrl)
                 .eventData(eventData)
-                .attributes(attributes.asMap(String.class, String.class)));
+                .attributes(attributes.asMap(String.class, Object.class)));
     }
 
     @When("^(?:create|send) Knative event as json$")
     public void createEventJson(String json) {
+        Map<String, Object> attributes = CloudEventSupport.attributesFromJson(json)
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
         runner.run(knative()
                 .event()
                 .send()
                 .client(httpClient)
                 .brokerUrl(brokerUrl)
                 .eventData(eventData)
-                .attributes(CloudEventSupport.attributesFromJson(json)));
+                .attributes(attributes));
     }
 
     /**

@@ -125,7 +125,9 @@ public class CamelJBangSteps {
 
         if (autoRemoveResources) {
             runner.run(doFinally()
-                .actions(camel().jbang().stop(fileName)));
+                .actions(camel().jbang()
+                        .stop()
+                        .integration(fileName)));
         }
 
         resourceFiles.clear();
@@ -141,14 +143,16 @@ public class CamelJBangSteps {
     @Then("^Camel integration ([^\\s]+)\\.(?:groovy|xml|java) should be running$")
     public void verifyIntegration(String fileName) {
         runner.run(camel().jbang()
-                .verify(fileName)
+                .verify()
+                .integration(fileName)
                 .isRunning());
     }
 
     @Given("^stop Camel integration ([^\\s]+)(?:.groovy|.xml|.java)$")
     public void stopIntegration(String routeId) {
         runner.run(camel().jbang()
-                        .stop(routeId));
+                        .stop()
+                        .integration(routeId));
     }
 
     @Given("^Camel integration ([^\\s]+)(?:.groovy|.xml|.java) is stopped")
@@ -156,7 +160,8 @@ public class CamelJBangSteps {
     public void integrationShouldBeStopped(String name) {
         runner.run(camel()
                 .jbang()
-                .verify(name)
+                .verify()
+                .integration(name)
                 .maxAttempts(maxAttempts)
                 .delayBetweenAttempts(delayBetweenAttempts)
                 .isStopped());
@@ -171,7 +176,8 @@ public class CamelJBangSteps {
     public void integrationShouldPrintMultiline(String name, String message) {
         runner.run(camel()
                 .jbang()
-                .verify(name)
+                .verify()
+                .integration(name)
                 .printLogs(CamelSettings.isPrintPodLogs())
                 .stopOnErrorStatus(stopOnErrorStatus)
                 .maxAttempts(maxAttempts)
@@ -190,7 +196,8 @@ public class CamelJBangSteps {
                 .exception(ActionTimeoutException.class)
                 .when(camel()
                         .jbang()
-                        .verify(name)
+                        .verify()
+                        .integration(name)
                         .printLogs(CamelSettings.isPrintPodLogs())
                         .stopOnErrorStatus(stopOnErrorStatus)
                         .maxAttempts(maxAttempts)

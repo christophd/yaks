@@ -27,6 +27,7 @@ import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import org.citrusframework.Citrus;
 import org.citrusframework.TestCaseRunner;
+import org.citrusframework.actions.testcontainers.aws2.AwsService;
 import org.citrusframework.annotations.CitrusFramework;
 import org.citrusframework.annotations.CitrusResource;
 import org.citrusframework.context.TestContext;
@@ -46,10 +47,10 @@ public class LocalStackSteps {
     @CitrusResource
     private TestContext context;
 
-    private String localStackVersion = LocalStackSettings.getVersion();
+    private String localStackVersion = "4.8.0";
     private int startupTimeout = LocalStackSettings.getStartupTimeout();
 
-    private Set<LocalStackContainer.Service> services = new HashSet<>();
+    private Set<AwsService> services = new HashSet<>();
 
     private Map<String, String> env = new HashMap<>();
 
@@ -85,7 +86,7 @@ public class LocalStackSteps {
 
     @Given("^Enable service (S3|KINESIS|SQS|SNS|DYNAMODB|DYNAMODB_STREAMS|IAM|API_GATEWAY|FIREHOSE|LAMBDA)$")
     public void enableService(String service) {
-        services.add(LocalStackContainer.Service.valueOf(service));
+        services.add(AwsService.valueOf(service));
     }
 
     @Given("^start LocalStack container$")

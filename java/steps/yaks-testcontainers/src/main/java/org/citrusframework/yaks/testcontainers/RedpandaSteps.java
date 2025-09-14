@@ -46,7 +46,7 @@ public class RedpandaSteps {
 
     public static final int REDPANDA_PORT = 9092;
 
-    private String redpandaVersion = RedpandaSettings.getRedpandaVersion();
+    private String redpandaVersion = "v25.2.4";
 
     private int startupTimeout = RedpandaSettings.getStartupTimeout();
 

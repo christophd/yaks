@@ -32,6 +32,7 @@ import org.citrusframework.annotations.CitrusResource;
 import org.citrusframework.context.TestContext;
 import org.citrusframework.kubernetes.KubernetesSettings;
 import org.citrusframework.kubernetes.actions.KubernetesAction;
+import org.citrusframework.kubernetes.actions.KubernetesActionBuilder;
 
 /**
  * @author Christoph Deppisch
@@ -160,6 +161,12 @@ public class KubernetesTestSteps {
         @Override
         public boolean isAutoRemoveResources() {
             return KubernetesSettings.isAutoRemoveResources();
+        }
+
+        @Override
+        public KubernetesActionBuilder kubernetes() {
+            return new KubernetesActionBuilder()
+                    .client(KubernetesSupport.getKubernetesClient(citrus));
         }
     }
 }

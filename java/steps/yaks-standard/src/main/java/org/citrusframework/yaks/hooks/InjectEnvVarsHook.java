@@ -53,7 +53,6 @@ public class InjectEnvVarsHook {
                     scenario.getUri();
                 }
 
-
                 Optional<String> namespaceEnv = getNamespaceSetting();
                 Optional<String> domainEnv = getClusterWildcardSetting();
 
